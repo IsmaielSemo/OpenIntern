@@ -1,31 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart' as intl;
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'validators.dart';
 
-class SignupScreen extends StatefulWidget {
-  const SignupScreen({Key? key}) : super(key: key);
+class AuthScreen extends StatefulWidget {
+  const AuthScreen({Key? key}) : super(key: key);
 
   @override
-  State<SignupScreen> createState() => _SignupScreenState();
+  State createState() => _AuthScreenState();
 }
 
-class _SignupScreenState extends State<SignupScreen> {
+class _AuthScreenState extends State<AuthScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final _universityController = TextEditingController();
-
   DateTime? _dateOfBirth;
   int? _graduationYear;
   final List<int> _graduationYears = List.generate(
     10,
-    (index) => DateTime.now().year + index - 4,
+        (index) => DateTime.now().year + index - 4,
   );
-
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
-
   String? _emailError;
   String? _usernameError;
   String? _passwordError;
@@ -33,8 +33,12 @@ class _SignupScreenState extends State<SignupScreen> {
   String? _dobError;
   String? _universityError;
   String? _graduationYearError;
-
   bool _isLoading = false;
+  String? _errorMessage;
+  bool _isSignupMode = true; // Toggle between signup and login
+
+  // API base URL - replace with your actual server URL
+  final String apiUrl = 'http://10.65.150.71:3000';
 
   @override
   void dispose() {
@@ -63,7 +67,6 @@ class _SignupScreenState extends State<SignupScreen> {
         );
       },
     );
-
     if (picked != null) {
       setState(() {
         _dateOfBirth = picked;
@@ -72,24 +75,57 @@ class _SignupScreenState extends State<SignupScreen> {
     }
   }
 
-  Future<void> _attemptSignup() async {
+  Future<void> _attemptAuth() async {
     if (!_validateForm()) return;
 
     setState(() {
       _isLoading = true;
+      _errorMessage = null;
     });
 
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 1));
+    try {
+      final uri = Uri.parse(_isSignupMode ? '$apiUrl/sign-up' : '$apiUrl/login');
+      final Map<String, dynamic> body = _isSignupMode
+          ? {
+        'username': _usernameController.text.trim(),
+        'email': _emailController.text.trim(),
+        'password': _passwordController.text,
+        'dob': _dateOfBirth?.toIso8601String(),
+        'university': _universityController.text.trim(),
+        'graduationYear': _graduationYear,
+      }
+          : {
+        'email': _emailController.text.trim(),
+        'password': _passwordController.text,
+      };
 
-    if (mounted) {
+      final response = await http.post(
+        uri,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(body),
+      );
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == (_isSignupMode ? 201 : 200)) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(_isSignupMode ? 'Account created successfully!' : 'Login successful!')),
+          );
+          // Navigate to home screen or wherever appropriate
+          Navigator.pushReplacementNamed(context, '/login');
+        }
+      } else {
+        setState(() {
+          _errorMessage = data['message'] ?? (_isSignupMode ? 'Failed to create account' : 'Login failed');
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
       setState(() {
+        _errorMessage = 'Connection error: ${e.toString()}';
         _isLoading = false;
       });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Account created successfully!')),
-      );
     }
   }
 
@@ -108,135 +144,91 @@ class _SignupScreenState extends State<SignupScreen> {
 
     // Validate email
     final email = _emailController.text.trim();
-    if (email.isEmpty) {
+    final emailError = Validators.validateEmail(email);
+    if (emailError != null) {
       setState(() {
-        _emailError = 'Email cannot be empty';
-      });
-      isValid = false;
-    } else if (!_validateEmail(email)) {
-      setState(() {
-        _emailError = 'Please enter a valid email address';
+        _emailError = emailError;
       });
       isValid = false;
     }
 
-    // Validate username
-    final username = _usernameController.text.trim();
-    if (username.isEmpty) {
-      setState(() {
-        _usernameError = 'Username cannot be empty';
-      });
-      isValid = false;
-    } else if (!_validateUsername(username)) {
-      isValid = false;
+    // Validate username (only for signup)
+    if (_isSignupMode) {
+      final username = _usernameController.text.trim();
+      if (username.isEmpty) {
+        setState(() {
+          _usernameError = 'Username cannot be empty';
+        });
+        isValid = false;
+      } else if (username.length < 3) {
+        setState(() {
+          _usernameError = 'Username must be at least 3 characters long';
+        });
+        isValid = false;
+      }
     }
 
     // Validate password
     final password = _passwordController.text;
-    if (password.isEmpty) {
+    final passwordError = Validators.validatePassword(password);
+    if (passwordError != null) {
       setState(() {
-        _passwordError = 'Password cannot be empty';
-      });
-      isValid = false;
-    } else if (!_validatePassword(password)) {
-      isValid = false;
-    }
-
-    // Validate confirm password
-    final confirmPassword = _confirmPasswordController.text;
-    if (confirmPassword.isEmpty) {
-      setState(() {
-        _confirmPasswordError = 'Please confirm your password';
-      });
-      isValid = false;
-    } else if (password != confirmPassword) {
-      setState(() {
-        _confirmPasswordError = 'Passwords do not match';
+        _passwordError = passwordError;
       });
       isValid = false;
     }
 
-    // Validate date of birth
-    if (!_validateDateOfBirth()) {
-      isValid = false;
-    }
+    // Validate confirm password (only for signup)
+    if (_isSignupMode) {
+      final confirmPassword = _confirmPasswordController.text;
+      if (confirmPassword.isEmpty) {
+        setState(() {
+          _confirmPasswordError = 'Please confirm your password';
+        });
+        isValid = false;
+      } else if (password != confirmPassword) {
+        setState(() {
+          _confirmPasswordError = 'Passwords do not match';
+        });
+        isValid = false;
+      }
 
-    // Validate university
-    final university = _universityController.text.trim();
-    if (university.isEmpty) {
-      setState(() {
-        _universityError = 'Please enter your university';
-      });
-      isValid = false;
-    }
+      // Validate date of birth
+      if (_dateOfBirth == null) {
+        setState(() {
+          _dobError = 'Please select your date of birth';
+        });
+        isValid = false;
+      } else {
+        final today = DateTime.now();
+        final sixteenYearsAgo = DateTime(today.year - 16, today.month, today.day);
+        if (_dateOfBirth!.isAfter(sixteenYearsAgo)) {
+          setState(() {
+            _dobError = 'You must be at least 16 years old to register';
+          });
+          isValid = false;
+        }
+      }
 
-    // Validate graduation year
-    if (_graduationYear == null) {
-      setState(() {
-        _graduationYearError = 'Please select your graduation year';
-      });
-      isValid = false;
+      // Validate university
+      final university = _universityController.text.trim();
+      if (university.isEmpty) {
+        setState(() {
+          _universityError = 'Please enter your university';
+        });
+        isValid = false;
+      }
+
+      // Validate graduation year
+      if (_graduationYear == null) {
+        setState(() {
+          _graduationYearError = 'Please select your graduation year';
+        });
+        isValid = false;
+      }
     }
 
     return isValid;
-  }
-
-  bool _validateEmail(String email) {
-    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-    return emailRegex.hasMatch(email);
-  }
-
-  bool _validateUsername(String username) {
-    if (username.length < 3) {
-      _usernameError = 'Username must be at least 3 characters long';
-      return false;
-    }
-    return true;
-  }
-
-  bool _validatePassword(String password) {
-    if (password.length < 8) {
-      _passwordError = 'Password must be at least 8 characters long';
-      return false;
-    }
-    if (RegExp(r'^[0-9]').hasMatch(password)) {
-      _passwordError = 'Password must not start with a number';
-      return false;
-    }
-    if (!RegExp(r'[a-zA-Z]').hasMatch(password)) {
-      _passwordError = 'Password must contain letters';
-      return false;
-    }
-    if (!RegExp(r'[0-9]').hasMatch(password)) {
-      _passwordError = 'Password must contain numbers';
-      return false;
-    }
-    if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(password)) {
-      _passwordError = 'Password must contain special characters';
-      return false;
-    }
-    return true;
-  }
-
-  bool _validateDateOfBirth() {
-    if (_dateOfBirth == null) {
-      _dobError = 'Please select your date of birth';
-      return false;
-    }
-
-    final today = DateTime.now();
-    final sixteenYearsAgo = DateTime(
-      today.year - 16,
-      today.month,
-      today.day,
-    );
-
-    if (_dateOfBirth!.isAfter(sixteenYearsAgo)) {
-      _dobError = 'You must be at least 16 years old to register';
-      return false;
-    }
-
-    return true;
   }
 
   @override
@@ -244,16 +236,8 @@ class _SignupScreenState extends State<SignupScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          Positioned(
-            top: -50,
-            left: -100,
-            child: _buildBlueCurve(),
-          ),
-          Positioned(
-            bottom: -50,
-            right: -100,
-            child: _buildBlueCurve(),
-          ),
+          Positioned(top: -50, left: -100, child: _buildBlueCurve()),
+          Positioned(bottom: -50, right: -100, child: _buildBlueCurve()),
           SafeArea(
             child: SingleChildScrollView(
               child: Padding(
@@ -263,18 +247,17 @@ class _SignupScreenState extends State<SignupScreen> {
                   children: [
                     const SizedBox(height: 20),
                     IconButton(
-                      icon: const Icon(Icons.arrow_back,
-                          color: Color(0xFF4285F4)),
+                      icon: const Icon(Icons.arrow_back, color: Color(0xFF4285F4)),
                       onPressed: () => Navigator.pop(context),
                     ),
                     const SizedBox(height: 10),
                     Center(
                       child: Text(
-                        'Create Account',
-                        style: TextStyle(
+                        _isSignupMode ? 'Create Account' : 'Login',
+                        style: const TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
-                          color: const Color(0xFF4285F4),
+                          color: Color(0xFF4285F4),
                         ),
                       ),
                     ),
@@ -291,13 +274,15 @@ class _SignupScreenState extends State<SignupScreen> {
                             errorText: _emailError,
                             keyboardType: TextInputType.emailAddress,
                           ),
-                          const SizedBox(height: 20),
-                          _buildFieldLabel('Username'),
-                          _buildTextField(
-                            controller: _usernameController,
-                            hintText: 'username (min. 3 characters)',
-                            errorText: _usernameError,
-                          ),
+                          if (_isSignupMode) ...[
+                            const SizedBox(height: 20),
+                            _buildFieldLabel('Username'),
+                            _buildTextField(
+                              controller: _usernameController,
+                              hintText: 'username (min. 3 characters)',
+                              errorText: _usernameError,
+                            ),
+                          ],
                           const SizedBox(height: 20),
                           _buildFieldLabel('Password'),
                           _buildTextField(
@@ -311,116 +296,112 @@ class _SignupScreenState extends State<SignupScreen> {
                               });
                             },
                           ),
-                          _buildHelpText(
-                            'Password must be at least 8 characters, not start with a number, '
-                            'and contain letters, numbers, and special characters.',
-                          ),
-                          const SizedBox(height: 20),
-                          _buildFieldLabel('Confirm Password'),
-                          _buildTextField(
-                            controller: _confirmPasswordController,
-                            hintText: '••••••••',
-                            errorText: _confirmPasswordError,
-                            obscureText: _obscureConfirmPassword,
-                            toggleObscure: () {
-                              setState(() {
-                                _obscureConfirmPassword =
-                                    !_obscureConfirmPassword;
-                              });
-                            },
-                          ),
-                          const SizedBox(height: 20),
-                          _buildFieldLabel('Date of Birth'),
-                          GestureDetector(
-                            onTap: _selectDate,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 14,
+                          if (_isSignupMode) ...[
+                            _buildHelpText(
+                              'Password must be at least 8 characters, not start with a number, '
+                                  'and contain letters, numbers, and special characters.',
+                            ),
+                            const SizedBox(height: 20),
+                            _buildFieldLabel('Confirm Password'),
+                            _buildTextField(
+                              controller: _confirmPasswordController,
+                              hintText: '••••••••',
+                              errorText: _confirmPasswordError,
+                              obscureText: _obscureConfirmPassword,
+                              toggleObscure: () {
+                                setState(() {
+                                  _obscureConfirmPassword = !_obscureConfirmPassword;
+                                });
+                              },
+                            ),
+                            const SizedBox(height: 20),
+                            _buildFieldLabel('Date of Birth'),
+                            GestureDetector(
+                              onTap: _selectDate,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      _dateOfBirth != null
+                                          ? intl.DateFormat('MMM dd, yyyy').format(_dateOfBirth!)
+                                          : 'Select your date of birth',
+                                      style: TextStyle(
+                                        color: _dateOfBirth != null ? Colors.black : Colors.grey[600],
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    const Icon(Icons.calendar_today, color: Colors.grey),
+                                  ],
+                                ),
                               ),
+                            ),
+                            if (_dobError != null)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 6, left: 16),
+                                child: Text(
+                                  _dobError!,
+                                  style: const TextStyle(color: Colors.red, fontSize: 12),
+                                ),
+                              ),
+                            _buildHelpText('You must be at least 16 years old'),
+                            const SizedBox(height: 20),
+                            _buildFieldLabel('University'),
+                            _buildTextField(
+                              controller: _universityController,
+                              hintText: 'Your university name',
+                              errorText: _universityError,
+                            ),
+                            const SizedBox(height: 20),
+                            _buildFieldLabel('Graduation Year'),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    _dateOfBirth != null
-                                        ? intl.DateFormat('MMM dd, yyyy')
-                                            .format(_dateOfBirth!)
-                                        : 'Select your date of birth',
-                                    style: TextStyle(
-                                      color: _dateOfBirth != null
-                                          ? Colors.black
-                                          : Colors.grey[600],
-                                    ),
-                                  ),
-                                  const Spacer(),
-                                  const Icon(Icons.calendar_today,
-                                      color: Colors.grey),
-                                ],
+                              child: DropdownButtonFormField<int>(
+                                value: _graduationYear,
+                                hint: const Text('Select graduation year'),
+                                isExpanded: true,
+                                decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.symmetric(vertical: 10),
+                                ),
+                                items: _graduationYears.map((int year) {
+                                  return DropdownMenuItem<int>(
+                                    value: year,
+                                    child: Text(year.toString()),
+                                  );
+                                }).toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    _graduationYear = value;
+                                    _graduationYearError = null;
+                                  });
+                                },
                               ),
                             ),
-                          ),
-                          if (_dobError != null)
-                            Padding(
-                              padding: const EdgeInsets.only(top: 6, left: 16),
-                              child: Text(
-                                _dobError!,
-                                style: const TextStyle(
-                                  color: Colors.red,
-                                  fontSize: 12,
+                            if (_graduationYearError != null)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 6, left: 16),
+                                child: Text(
+                                  _graduationYearError!,
+                                  style: const TextStyle(color: Colors.red, fontSize: 12),
                                 ),
                               ),
-                            ),
-                          _buildHelpText('You must be at least 16 years old'),
-                          const SizedBox(height: 20),
-                          _buildFieldLabel('University'),
-                          _buildTextField(
-                            controller: _universityController,
-                            hintText: 'Your university name',
-                            errorText: _universityError,
-                          ),
-                          const SizedBox(height: 20),
-                          _buildFieldLabel('Graduation Year'),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: DropdownButtonFormField<int>(
-                              value: _graduationYear,
-                              hint: const Text('Select graduation year'),
-                              isExpanded: true,
-                              decoration: const InputDecoration(
-                                border: InputBorder.none,
-                                contentPadding:
-                                    EdgeInsets.symmetric(vertical: 10),
-                              ),
-                              items: _graduationYears.map((int year) {
-                                return DropdownMenuItem<int>(
-                                  value: year,
-                                  child: Text(year.toString()),
-                                );
-                              }).toList(),
-                              onChanged: (value) {
-                                setState(() {
-                                  _graduationYear = value;
-                                  _graduationYearError = null;
-                                });
-                              },
-                            ),
-                          ),
-                          if (_graduationYearError != null)
+                          ],
+                          if (_errorMessage != null)
                             Padding(
-                              padding: const EdgeInsets.only(top: 6, left: 16),
+                              padding: const EdgeInsets.only(top: 20),
                               child: Text(
-                                _graduationYearError!,
-                                style: const TextStyle(
-                                  color: Colors.red,
-                                  fontSize: 12,
-                                ),
+                                _errorMessage!,
+                                style: const TextStyle(color: Colors.red, fontSize: 14),
+                                textAlign: TextAlign.center,
                               ),
                             ),
                           const SizedBox(height: 30),
@@ -428,29 +409,28 @@ class _SignupScreenState extends State<SignupScreen> {
                             width: double.infinity,
                             height: 50,
                             child: ElevatedButton(
-                              onPressed: _isLoading ? null : _attemptSignup,
+                              onPressed: _isLoading ? null : _attemptAuth,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFF4285F4),
                                 foregroundColor: Colors.white,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(25),
                                 ),
-                                disabledBackgroundColor:
-                                    const Color(0xFF4285F4).withOpacity(0.5),
+                                disabledBackgroundColor: const Color(0xFF4285F4).withOpacity(0.5),
                               ),
                               child: _isLoading
                                   ? const SizedBox(
-                                      width: 20,
-                                      height: 20,
-                                      child: CircularProgressIndicator(
-                                        color: Colors.white,
-                                        strokeWidth: 2,
-                                      ),
-                                    )
-                                  : const Text(
-                                      'Sign Up',
-                                      style: TextStyle(fontSize: 16),
-                                    ),
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                                  : Text(
+                                _isSignupMode ? 'Sign Up' : 'Login',
+                                style: const TextStyle(fontSize: 16),
+                              ),
                             ),
                           ),
                           const SizedBox(height: 20),
@@ -459,19 +439,26 @@ class _SignupScreenState extends State<SignupScreen> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
-                                  'Already have an account? ',
-                                  style: TextStyle(
-                                    color: Colors.grey[700],
-                                  ),
+                                  _isSignupMode ? 'Already have an account? ' : 'Don\'t have an account? ',
+                                  style: TextStyle(color: Colors.grey[700]),
                                 ),
                                 GestureDetector(
                                   onTap: () {
-                                    Navigator.pushReplacementNamed(
-                                        context, '/login');
+                                    setState(() {
+                                      _isSignupMode = !_isSignupMode;
+                                      _errorMessage = null;
+                                      _emailController.clear();
+                                      _usernameController.clear();
+                                      _passwordController.clear();
+                                      _confirmPasswordController.clear();
+                                      _universityController.clear();
+                                      _dateOfBirth = null;
+                                      _graduationYear = null;
+                                    });
                                   },
-                                  child: const Text(
-                                    'Login',
-                                    style: TextStyle(
+                                  child: Text(
+                                    _isSignupMode ? 'Login' : 'Sign Up',
+                                    style: const TextStyle(
                                       color: Color(0xFF4285F4),
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -499,10 +486,7 @@ class _SignupScreenState extends State<SignupScreen> {
       padding: const EdgeInsets.only(bottom: 8),
       child: Text(
         label,
-        style: TextStyle(
-          color: Colors.grey[800],
-          fontWeight: FontWeight.w500,
-        ),
+        style: TextStyle(color: Colors.grey[800], fontWeight: FontWeight.w500),
       ),
     );
   }
@@ -528,18 +512,15 @@ class _SignupScreenState extends State<SignupScreen> {
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
         ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 14,
-        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         suffixIcon: toggleObscure != null
             ? IconButton(
-                icon: Icon(
-                  obscureText ? Icons.visibility_off : Icons.visibility,
-                  color: Colors.grey,
-                ),
-                onPressed: toggleObscure,
-              )
+          icon: Icon(
+            obscureText ? Icons.visibility_off : Icons.visibility,
+            color: Colors.grey,
+          ),
+          onPressed: toggleObscure,
+        )
             : null,
       ),
     );
@@ -550,10 +531,7 @@ class _SignupScreenState extends State<SignupScreen> {
       padding: const EdgeInsets.only(top: 6, left: 16),
       child: Text(
         text,
-        style: TextStyle(
-          fontSize: 12,
-          color: Colors.grey[600],
-        ),
+        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
       ),
     );
   }
