@@ -5,7 +5,7 @@ import 'dart:convert';
 import 'validators.dart';
 
 class AuthScreen extends StatefulWidget {
-  const AuthScreen({Key? key}) : super(key: key);
+  const AuthScreen({super.key});
 
   @override
   State createState() => _AuthScreenState();

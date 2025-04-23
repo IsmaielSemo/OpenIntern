@@ -35,7 +35,7 @@ class Internship {
 }
 
 class FilterScreen extends StatefulWidget {
-  const FilterScreen({Key? key}) : super(key: key);
+  const FilterScreen({super.key});
 
   @override
   State<FilterScreen> createState() => _FilterScreenState();
@@ -256,7 +256,7 @@ class _FilterScreenState extends State<FilterScreen> {
 class FilterResultsScreen extends StatelessWidget {
   final List<Internship> internships;
 
-  const FilterResultsScreen({Key? key, required this.internships}) : super(key: key);
+  const FilterResultsScreen({super.key, required this.internships});
 
   @override
   Widget build(BuildContext context) {
