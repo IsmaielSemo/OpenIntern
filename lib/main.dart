@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'loginscreen.dart'; // Ensure this file exists and defines LoginScreen
-import 'signupscreen.dart'; // Ensure this file exists and defines SignupScreen
+import 'loginscreen.dart';
 import 'filterscreen.dart';
 
 void main() {
@@ -18,15 +17,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: const Color(0xFF4285F4),
         scaffoldBackgroundColor: Colors.grey[200],
+        useMaterial3: true,
       ),
-      initialRoute: '/', // Keep this as the landing page
-      routes: {
-        '/': (context) => const HomeScreen(),
-        '/login': (context) => const LoginScreen(),
-        '/signup': (context) => const AuthScreen(),
-        '/filter': (context) => const FilterScreen(),
-        '/home': (context) => const HomeScreen(), // Redirect after successful login
-      },
+      home: const LoginScreen(),
     );
   }
 }
@@ -76,7 +69,10 @@ class HomeScreen extends StatelessWidget {
                     height: 50,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.pushNamed(context, '/login');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const LoginScreen()),
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF4285F4),
@@ -87,28 +83,6 @@ class HomeScreen extends StatelessWidget {
                       ),
                       child: const Text(
                         'Login',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  SizedBox(
-                    width: 200,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/signup');
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: const Color(0xFF4285F4),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25),
-                          side: const BorderSide(color: Color(0xFF4285F4)),
-                        ),
-                      ),
-                      child: const Text(
-                        'Sign Up',
                         style: TextStyle(fontSize: 16),
                       ),
                     ),

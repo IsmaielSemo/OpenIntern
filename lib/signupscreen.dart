@@ -38,7 +38,10 @@ class _AuthScreenState extends State<AuthScreen> {
   bool _isSignupMode = true; // Toggle between signup and login
 
   // API base URL - replace with your actual server URL
-  final String apiUrl = 'http://10.65.150.71:3000';
+  final String apiUrl = 'http://localhost:3000';
+  // Use 'http://localhost:3000' for web
+  // Use 'http://10.0.2.2:3000' for Android emulator
+  // Use 'http://127.0.0.1:3000' for iOS simulator
 
   @override
   void dispose() {

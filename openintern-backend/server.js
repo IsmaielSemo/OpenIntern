@@ -1,5 +1,5 @@
 const express = require('express');
-const mysql = require('mysql');
+const mysql = require('mysql2');
 const session = require('express-session');
 const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
@@ -12,46 +12,73 @@ const sessionSecret = process.env.SESSION_SECRET || crypto.randomBytes(32).toStr
 
 const app = express();
 
-// Improved CORS configuration - allow credentials
+// CORS configuration
 app.use(cors({
-  origin: true,  // Allow requests from any origin in development
+  origin: ['http://localhost:3000', 'http://localhost:5173', 'http://127.0.0.1:5173', 'http://10.65.150.71:3000', 'http://10.65.150.71:5173'],
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'X-Requested-With', 'Accept'],
   exposedHeaders: ['set-cookie']
 }));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Session configuration with secure secret
+// Session configuration
 app.use(session({
   secret: sessionSecret,
   resave: true,
   saveUninitialized: true,
   cookie: {
-    secure: false, // Set to true in production with HTTPS
+    secure: false,
     httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    maxAge: 24 * 60 * 60 * 1000,
     sameSite: 'lax'
   }
 }));
 
-// MySQL Connection with better error handling
+// MySQL Connection
 const connection = mysql.createConnection({
   host: process.env.DB_HOST || 'localhost',
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || 'Ganna97812000',
   database: process.env.DB_NAME || 'openintern'
-});
+}).promise();
 
-connection.connect(error => {
-  if (error) {
-    console.error('Database connection failed:', error);
-    throw error; // This will stop the server if DB connection fails
+// Test database connection
+async function testConnection() {
+  try {
+    await connection.connect();
+    console.log('Successfully connected to the database.');
+    
+    // Create database if it doesn't exist
+    await connection.query('CREATE DATABASE IF NOT EXISTS openintern');
+    
+    // Use the database
+    await connection.query('USE openintern');
+    
+    // Create users table if it doesn't exist
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        username VARCHAR(255) UNIQUE NOT NULL,
+        email VARCHAR(255) UNIQUE NOT NULL,
+        password VARCHAR(255) NOT NULL,
+        dob DATE,
+        university VARCHAR(255),
+        graduation_year INT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    
+    console.log('Database and tables are ready.');
+  } catch (error) {
+    console.error('Database connection/setup failed:', error);
+    process.exit(1);
   }
-  console.log('Successfully connected to the database.');
-});
+}
+
+testConnection();
 
 // Debug middleware to log session information
 app.use((req, res, next) => {
@@ -84,72 +111,51 @@ app.post('/sign-up', async (req, res) => {
     }
 
     // Check if user already exists
-    connection.query(
-      'SELECT * FROM users WHERE email = ? OR username = ?',
-      [email, username],
-      async (error, results) => {
-        if (error) {
-          console.error('Database query error:', error);
-          return res.status(500).send({
-            message: 'Database error during user check.',
-            error: error.message
-          });
+    const [results] = await connection.query('SELECT * FROM users WHERE email = ? OR username = ?', [email, username]);
+
+    if (results.length > 0) {
+      return res.status(409).send({
+        message: 'This email or username is already in use!'
+      });
+    }
+
+    try {
+      // Hash password
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      // Insert new user
+      const [insertResult] = await connection.query(
+        'INSERT INTO users (username, email, password, dob, university, graduation_year) VALUES (?, ?, ?, ?, ?, ?)',
+        [username, email, hashedPassword, dob, university, graduationYear]
+      );
+
+      // Create session
+      req.session.loggedin = true;
+      req.session.username = username;
+      req.session.userId = insertResult.insertId;
+
+      // Save session before responding
+      req.session.save(err => {
+        if (err) {
+          console.error('Session save error:', err);
         }
 
-        if (results.length > 0) {
-          return res.status(409).send({
-            message: 'This email or username is already in use!'
-          });
-        }
+        console.log('Session created:', req.sessionID);
 
-        try {
-          // Hash password
-          const hashedPassword = await bcrypt.hash(password, 10);
-
-          // Insert new user
-          connection.query(
-            'INSERT INTO users (username, email, password, dob, university, graduation_year) VALUES (?, ?, ?, ?, ?, ?)',
-            [username, email, hashedPassword, dob, university, graduationYear],
-            (error, results) => {
-              if (error) {
-                console.error('User insertion error:', error);
-                return res.status(500).send({
-                  message: 'Error creating user account.',
-                  error: error.message
-                });
-              }
-
-              // Create session
-              req.session.loggedin = true;
-              req.session.username = username;
-              req.session.userId = results.insertId;
-
-              // Save session before responding
-              req.session.save(err => {
-                if (err) {
-                  console.error('Session save error:', err);
-                }
-
-                console.log('Session created:', req.sessionID);
-
-                return res.status(201).send({
-                  message: 'User registered successfully!',
-                  userId: results.insertId,
-                  username: username,
-                  sessionID: req.sessionID
-                });
-              });
-            }
-          );
-        } catch (hashError) {
-          console.error('Password hashing error:', hashError);
-          return res.status(500).send({
-            message: 'Error processing password.',
-            error: hashError.message
-          });
-        }
-      }
-    );
+        return res.status(201).send({
+          message: 'User registered successfully!',
+          userId: insertResult.insertId,
+          username: username,
+          sessionID: req.sessionID
+        });
+      });
+    } catch (hashError) {
+      console.error('Password hashing error:', hashError);
+      return res.status(500).send({
+        message: 'Error processing password.',
+        error: hashError.message
+      });
+    }
   } catch (error) {
     console.error('Sign-up error:', error);
     return res.status(500).send({
@@ -160,7 +166,7 @@ app.post('/sign-up', async (req, res) => {
 });
 
 // 2. Login endpoint with improved error handling
-app.post('/login', (req, res) => {
+app.post('/login', async (req, res) => {
   try {
     console.log('Received login request:', req.body);
     const { email, password } = req.body;
@@ -171,63 +177,51 @@ app.post('/login', (req, res) => {
       });
     }
 
-    connection.query(
-      'SELECT * FROM users WHERE email = ?',
-      [email],
-      async (error, results) => {
-        if (error) {
-          console.error('Database query error:', error);
-          return res.status(500).send({
-            message: 'Database error during login.',
-            error: error.message
-          });
-        }
+    const [results] = await connection.query('SELECT * FROM users WHERE email = ?', [email]);
 
-        if (results.length === 0) {
-          return res.status(401).send({
-            message: 'Invalid email or password!'
-          });
-        }
+    if (results.length === 0) {
+      return res.status(401).send({
+        message: 'Invalid email or password!'
+      });
+    }
 
-        try {
-          // Compare passwords
-          const match = await bcrypt.compare(password, results[0].password);
+    try {
+      // Compare passwords
+      const match = await bcrypt.compare(password, results[0].password);
 
-          if (!match) {
-            return res.status(401).send({
-              message: 'Invalid email or password!'
-            });
-          }
-
-          // Set session
-          req.session.loggedin = true;
-          req.session.username = results[0].username;
-          req.session.userId = results[0].id;
-
-          // Save session before responding
-          req.session.save(err => {
-            if (err) {
-              console.error('Session save error:', err);
-            }
-
-            console.log('Login successful, session created:', req.sessionID);
-
-            return res.status(200).send({
-              message: 'Login successful!',
-              userId: results[0].id,
-              username: results[0].username,
-              sessionID: req.sessionID
-            });
-          });
-        } catch (compareError) {
-          console.error('Password comparison error:', compareError);
-          return res.status(500).send({
-            message: 'Error verifying password.',
-            error: compareError.message
-          });
-        }
+      if (!match) {
+        return res.status(401).send({
+          message: 'Invalid email or password!'
+        });
       }
-    );
+
+      // Set session
+      req.session.loggedin = true;
+      req.session.username = results[0].username;
+      req.session.userId = results[0].id;
+
+      // Save session before responding
+      req.session.save(err => {
+        if (err) {
+          console.error('Session save error:', err);
+        }
+
+        console.log('Login successful, session created:', req.sessionID);
+
+        return res.status(200).send({
+          message: 'Login successful!',
+          userId: results[0].id,
+          username: results[0].username,
+          sessionID: req.sessionID
+        });
+      });
+    } catch (compareError) {
+      console.error('Password comparison error:', compareError);
+      return res.status(500).send({
+        message: 'Error verifying password.',
+        error: compareError.message
+      });
+    }
   } catch (error) {
     console.error('Login error:', error);
     return res.status(500).send({
@@ -360,108 +354,81 @@ app.put('/profile', async (req, res) => {
 
   try {
     // First authenticate the user with email and password
-    connection.query(
-      'SELECT * FROM users WHERE email = ?',
-      [email],
-      async (error, results) => {
-        if (error) {
-          console.error('Database query error:', error);
-          return res.status(500).send({
-            message: 'Database error during authentication',
-            error: error.message
-          });
-        }
+    const [results] = await connection.query('SELECT * FROM users WHERE email = ?', [email]);
 
-        if (results.length === 0) {
-          return res.status(401).send({
-            message: 'Invalid email or password'
-          });
-        }
+    if (results.length === 0) {
+      return res.status(401).send({
+        message: 'Invalid email or password'
+      });
+    }
 
-        const user = results[0];
+    const user = results[0];
 
-        try {
-          // Compare passwords
-          const match = await bcrypt.compare(password, user.password);
+    try {
+      // Compare passwords
+      const match = await bcrypt.compare(password, user.password);
 
-          if (!match) {
-            return res.status(401).send({
-              message: 'Invalid email or password'
-            });
-          }
-
-          // Authentication successful, now update profile
-
-          // Prepare update fields
-          const updateFields = {};
-          const queryParams = [];
-
-          if (username) {
-            updateFields.username = '?';
-            queryParams.push(username);
-          }
-
-          if (university) {
-            updateFields.university = '?';
-            queryParams.push(university);
-          }
-
-          if (graduationYear) {
-            updateFields.graduation_year = '?';
-            queryParams.push(graduationYear);
-          }
-
-          // Handle new password if provided
-          if (newPassword) {
-            const hashedPassword = await bcrypt.hash(newPassword, 10);
-            updateFields.password = '?';
-            queryParams.push(hashedPassword);
-          }
-
-          // If no fields to update
-          if (Object.keys(updateFields).length === 0) {
-            return res.status(400).send({
-              message: 'No data provided for update'
-            });
-          }
-
-          // Build SET part of query
-          const setClause = Object.entries(updateFields)
-            .map(([field, placeholder]) => `${field} = ${placeholder}`)
-            .join(', ');
-
-          // Add user ID as the last parameter
-          queryParams.push(user.id);
-
-          const query = `UPDATE users SET ${setClause} WHERE id = ?`;
-
-          connection.query(query, queryParams, (error, results) => {
-            if (error) {
-              console.error('Profile update error:', error);
-              if (error.code === 'ER_DUP_ENTRY') {
-                return res.status(409).send({
-                  message: 'Username already taken'
-                });
-              }
-              return res.status(500).send({
-                message: 'Error updating profile',
-                error: error.message
-              });
-            }
-
-            return res.status(200).send({
-              message: 'Profile updated successfully'
-            });
-          });
-        } catch (compareError) {
-          console.error('Password comparison error:', compareError);
-          return res.status(500).send({
-            message: 'Error verifying password',
-            error: compareError.message
-          });
-        }
+      if (!match) {
+        return res.status(401).send({
+          message: 'Invalid email or password'
+        });
       }
-    );
+
+      // Authentication successful, now update profile
+
+      // Prepare update fields
+      const updateFields = {};
+      const queryParams = [];
+
+      if (username) {
+        updateFields.username = '?';
+        queryParams.push(username);
+      }
+
+      if (university) {
+        updateFields.university = '?';
+        queryParams.push(university);
+      }
+
+      if (graduationYear) {
+        updateFields.graduation_year = '?';
+        queryParams.push(graduationYear);
+      }
+
+      // Handle new password if provided
+      if (newPassword) {
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        updateFields.password = '?';
+        queryParams.push(hashedPassword);
+      }
+
+      // If no fields to update
+      if (Object.keys(updateFields).length === 0) {
+        return res.status(400).send({
+          message: 'No data provided for update'
+        });
+      }
+
+      // Build SET part of query
+      const setClause = Object.entries(updateFields)
+        .map(([field, placeholder]) => `${field} = ${placeholder}`)
+        .join(', ');
+
+      // Add user ID as the last parameter
+      queryParams.push(user.id);
+
+      const [updateResult] = await connection.query(`UPDATE users SET ${setClause} WHERE id = ?`, queryParams);
+
+      return res.status(200).send({
+        message: 'Profile updated successfully'
+      });
+    } catch (compareError) {
+      console.error('Password comparison error:', compareError);
+      return res.status(500).send({
+        message: 'Error verifying password',
+        error: compareError.message
+      });
+    }
   } catch (error) {
     console.error('Profile update error:', error);
     return res.status(500).send({
@@ -470,8 +437,11 @@ app.put('/profile', async (req, res) => {
     });
   }
 });
+
 // Set port and start the server
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
+  console.log(`Server accessible at http://localhost:${PORT}`);
+  console.log('To access from other devices, use your machine\'s IP address');
 });
