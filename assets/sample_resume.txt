@@ -1,0 +1,25 @@
+John Doe
+john.doe@email.com
+(555) 123-4567
+
+Education
+B.Sc. in Computer Science, University of Example, 2022
+
+Experience
+Software Intern, ExampleTech, Summer 2021
+- Developed a web application using JavaScript and React
+- Wrote unit tests in Python
+
+Skills
+- Python
+- JavaScript
+- React
+- HTML
+- CSS
+- Git
+
+Projects
+Personal Portfolio Website (React, HTML, CSS)
+
+Languages
+English (Fluent) 

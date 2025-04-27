@@ -6,6 +6,7 @@ import 'filterscreen.dart' hide Internship;
 import 'settingsscreen.dart';
 import 'models/internship.dart';
 import 'editprofilescreen.dart';
+import 'ResumeParserPage.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -24,7 +25,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
     _loadInternships();
   }
 
@@ -179,6 +180,15 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       appBar: AppBar(
         title: const Text('OpenIntern'),
         backgroundColor: const Color(0xFF4285F4),
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: const [
+            Tab(text: 'Recommended'),
+            Tab(text: 'Recent'),
+            Tab(text: 'All'),
+            Tab(text: 'Resume Parser'),
+          ],
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
@@ -201,32 +211,20 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             },
           ),
         ],
-        bottom: TabBar(
-          controller: _tabController,
-          onTap: (index) {
-            setState(() {
-              _selectedIndex = index;
-            });
-          },
-          tabs: const [
-            Tab(text: 'Recommended'),
-            Tab(text: 'Recently Added'),
-            Tab(text: 'All Offers'),
-          ],
-        ),
       ),
       body: TabBarView(
         controller: _tabController,
         children: [
-          _buildOffersList('Recommended'),
-          _buildOffersList('Recently Added'),
-          _buildOffersList('All Offers'),
+          _buildInternshipList(_getRecommendedInternships()),
+          _buildInternshipList(_getRecentlyAddedInternships()),
+          _buildInternshipList(_allInternships),
+          ResumeParserPage(),
         ],
       ),
     );
   }
 
-  Widget _buildOffersList(String type) {
+  Widget _buildInternshipList(List<Internship> internships) {
     if (_isLoading) {
       return const Center(
         child: CircularProgressIndicator(),
@@ -265,21 +263,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       );
     }
 
-    List<Internship> internships;
-    switch (type) {
-      case 'Recommended':
-        internships = _getRecommendedInternships();
-        break;
-      case 'Recently Added':
-        internships = _getRecentlyAddedInternships();
-        break;
-      case 'All Offers':
-        internships = _allInternships;
-        break;
-      default:
-        internships = [];
-    }
-
     if (internships.isEmpty) {
       return Center(
         child: Column(
@@ -292,7 +275,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             ),
             const SizedBox(height: 16),
             Text(
-              '$type Offers',
+              'Offers',
               style: TextStyle(
                 fontSize: 20,
                 color: Colors.grey[600],
@@ -365,18 +348,18 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                           color: Colors.grey[600],
                         ),
                       ),
-                      if (internship.postedDate != null) ...[
-                        const SizedBox(width: 16),
-                        Icon(Icons.access_time, size: 14, color: Colors.grey[600]),
-                        const SizedBox(width: 4),
-                        Text(
-                          internship.postedDate!,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey[600],
-                          ),
+                      ...[
+                      const SizedBox(width: 16),
+                      Icon(Icons.access_time, size: 14, color: Colors.grey[600]),
+                      const SizedBox(width: 4),
+                      Text(
+                        internship.postedDate!,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey[600],
                         ),
-                      ],
+                      ),
+                    ],
                     ],
                   ),
                   const SizedBox(height: 12),
