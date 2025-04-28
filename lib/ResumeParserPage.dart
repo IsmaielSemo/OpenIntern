@@ -8,6 +8,11 @@ import 'package:flutter/services.dart'; // for running shell commands
 import 'dart:typed_data';
 
 class ResumeParserPage extends StatefulWidget {
+  final Function(List<String>) onResumeUploaded;
+
+  const ResumeParserPage({Key? key, required this.onResumeUploaded})
+      : super(key: key);
+
   @override
   _ResumeParserPageState createState() => _ResumeParserPageState();
 }
@@ -27,7 +32,8 @@ class _ResumeParserPageState extends State<ResumeParserPage> {
       _recommendedJobs = [];
     });
     try {
-      final apiUrl = 'https://api.apilayer.com/resume_parser/url?url=${Uri.encodeComponent(_resumeUrl)}';
+      final apiUrl =
+          'https://api.apilayer.com/resume_parser/url?url=${Uri.encodeComponent(_resumeUrl)}';
       final response = await http.get(
         Uri.parse(apiUrl),
         headers: {'apikey': 'mMihrXALP2tnGc7GrzZeGrjyj7GpmYUL'},
@@ -45,6 +51,8 @@ class _ResumeParserPageState extends State<ResumeParserPage> {
       List<String> skills = List<String>.from(parsedData['skills'] ?? []);
       final jobs = await _loadJobs();
       _recommendedJobs = _rankJobs(jobs, skills);
+      widget.onResumeUploaded(skills); // Pass parsed skills to the callback
+      
       setState(() {
         _isLoading = false;
       });
@@ -123,14 +131,16 @@ class _ResumeParserPageState extends State<ResumeParserPage> {
       print('Response: ${response.body}');
       if (response.statusCode == 400) {
         setState(() {
-          _error = 'API Error 400: The file format was not accepted by the API. Please ensure you are uploading a valid, standards-compliant PDF or DOCX file exported from Word or Google Docs.';
+          _error =
+              'API Error 400: The file format was not accepted by the API. Please ensure you are uploading a valid, standards-compliant PDF or DOCX file exported from Word or Google Docs.';
           _isLoading = false;
         });
         return;
       }
       if (response.statusCode != 200) {
         setState(() {
-          _error = 'Error parsing resume: Exception: API Error: ${response.statusCode} - ${response.body}';
+          _error =
+              'Error parsing resume: Exception: API Error: ${response.statusCode} - ${response.body}';
           _isLoading = false;
         });
         return;
@@ -152,17 +162,21 @@ class _ResumeParserPageState extends State<ResumeParserPage> {
 
   Future<List<Map<String, dynamic>>> _loadJobs() async {
     try {
-      final String response = await DefaultAssetBundle.of(context).loadString('assets/internships.json');
+      final String response =
+          await DefaultAssetBundle.of(context).loadString('internships.json');
       return List<Map<String, dynamic>>.from(json.decode(response));
     } catch (e) {
       throw Exception('Error loading jobs: $e');
     }
   }
 
-  List<Map<String, dynamic>> _rankJobs(List<Map<String, dynamic>> jobs, List<String> skills) {
+  List<Map<String, dynamic>> _rankJobs(
+      List<Map<String, dynamic>> jobs, List<String> skills) {
     return jobs.map((job) {
       final jobSkills = List<String>.from(job['skills'] ?? []);
-      final matchingSkills = skills.where((skill) => jobSkills.contains(skill.toLowerCase())).length;
+      final matchingSkills = skills
+          .where((skill) => jobSkills.contains(skill.toLowerCase()))
+          .length;
       return {
         ...job,
         'matchingSkills': matchingSkills,
@@ -175,17 +189,18 @@ class _ResumeParserPageState extends State<ResumeParserPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Resume Parser'),
+        title: const Text('Resume Parser'),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: TextField(
                 controller: _urlController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Public Resume URL (PDF/DOCX)',
                   border: OutlineInputBorder(),
                 ),
@@ -216,7 +231,7 @@ class _ResumeParserPageState extends State<ResumeParserPage> {
                 padding: const EdgeInsets.all(16.0),
                 child: Text(
                   _error!,
-                  style: TextStyle(color: Colors.red),
+                  style: const TextStyle(color: Colors.red),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -228,7 +243,8 @@ class _ResumeParserPageState extends State<ResumeParserPage> {
                     final job = _recommendedJobs[index];
                     return ListTile(
                       title: Text(job['title'] ?? ''),
-                      subtitle: Text('Matching Skills: ${job['matchingSkills']}'),
+                      subtitle:
+                          Text('Matching Skills: ${job['matchingSkills']}'),
                     );
                   },
                 ),
@@ -239,3 +255,5 @@ class _ResumeParserPageState extends State<ResumeParserPage> {
     );
   }
 }
+
+

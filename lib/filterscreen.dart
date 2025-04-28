@@ -61,7 +61,7 @@ class _FilterScreenState extends State<FilterScreen> {
 
   Future<void> _loadInternships() async {
     try {
-      final String jsonString = await rootBundle.loadString('assets/internships.json');
+      final String jsonString = await rootBundle.loadString('internships.json');
       final List<dynamic> jsonData = json.decode(jsonString);
       final List<Internship> internships = jsonData.map((json) => Internship.fromJson(json)).toList();
       
@@ -112,9 +112,7 @@ class _FilterScreenState extends State<FilterScreen> {
 
             // Try to extract years from both experience required and detailed requirements
             int? years = extractYears(expReq);
-            if (years == null) {
-              years = extractYears(detailedReqs);
-            }
+            years ??= extractYears(detailedReqs);
 
             switch (level) {
               case 'No Experience':
@@ -385,7 +383,7 @@ class _FilterScreenState extends State<FilterScreen> {
                         OutlinedButton(
                           onPressed: _clearFilter,
                           style: ButtonStyle(
-                            padding: MaterialStateProperty.all(
+                            padding: WidgetStateProperty.all(
                               const EdgeInsets.symmetric(vertical: 12),
                             ),
                           ),
@@ -563,9 +561,9 @@ class FilterResultsScreen extends StatelessWidget {
                           Text('Company: ${internship.company}'),
                           Text('Location: ${internship.location}'),
                           Text('Job Type: ${internship.jobType}'),
-                          if (internship.postedDate != null) ...[
-                            Text('Posted: ${internship.postedDate}'),
-                          ],
+                          ...[
+                          Text('Posted: ${internship.postedDate}'),
+                        ],
                           Row(
                             children: [
                               if (internship.isPaid)

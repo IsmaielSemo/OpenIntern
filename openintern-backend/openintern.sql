@@ -23,6 +23,12 @@ CREATE TABLE IF NOT EXISTS users (
   DEFAULT CHARSET=utf8 
   COLLATE=utf8_general_ci;
 
+
+-- Insert a hard-coded user into the `users` table
+INSERT INTO users (username, email, password, dob, university, graduation_year)
+VALUES ('testuser', 'testuser@example.com', '$2b$10$hashedpassword', '2000-01-01', 'Test University', 2025);
+
+-- Create the user_filters table
 CREATE TABLE user_filters (
   id INT AUTO_INCREMENT PRIMARY KEY,
   user_id INT NOT NULL,
