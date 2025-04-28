@@ -460,7 +460,7 @@ class _HomeScreenState extends State<HomeScreen>
             ),
             const SizedBox(height: 16),
             Text(
-              'No offers available yet',
+              'No recommendations available yet',
               style: TextStyle(
                 fontSize: 20,
                 color: Colors.grey[600],
@@ -468,7 +468,7 @@ class _HomeScreenState extends State<HomeScreen>
             ),
             const SizedBox(height: 8),
             Text(
-              'Please upload your resume to see matching internships.',
+              'Please upload your resume to see recommendations.',
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.grey[500],
