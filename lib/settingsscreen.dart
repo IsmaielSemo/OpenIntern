@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'editprofilescreen.dart';
+import 'welcome_screen.dart';
+
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
@@ -125,8 +127,12 @@ class SettingsScreen extends StatelessWidget {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                // Perform logout
-                Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+                // Navigate to welcome screen and remove all previous routes
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+                  (route) => false,
+                );
               },
               child: const Text('Logout'),
             ),

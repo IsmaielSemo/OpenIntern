@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'homescreen.dart';
+import 'verification_screen.dart';
 
 class AuthScreen extends StatefulWidget {
   final bool isLogin;
@@ -25,11 +26,23 @@ class _AuthScreenState extends State<AuthScreen> {
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      // TODO: Implement actual authentication logic
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
-      );
+      if (widget.isLogin) {
+        // For login, directly go to home screen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
+      } else {
+        // For signup, go to verification screen
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => VerificationScreen(
+              email: _emailController.text,
+            ),
+          ),
+        );
+      }
     }
   }
 

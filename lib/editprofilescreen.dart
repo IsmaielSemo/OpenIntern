@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'validators.dart';
+import 'deactivate_account_screen.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -19,7 +18,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   int? _graduationYear;
   final List<int> _graduationYears = List.generate(
     10,
-        (index) => DateTime.now().year + index - 4,
+    (index) => DateTime.now().year + index - 4,
   );
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
@@ -31,21 +30,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   bool _isLoading = false;
   String? _errorMessage;
   bool _isPasswordChangeRequested = false;
-  bool _isProfileLoading = true;
-  Map<String, dynamic>? _userProfile;
 
   // Track which fields have been modified
   bool _usernameModified = false;
   bool _universityModified = false;
   bool _graduationYearModified = false;
 
-  // API base URL
-  final String apiUrl = 'http://10.65.150.71:3000';
-
   @override
   void initState() {
     super.initState();
-    _fetchUserProfile();
+    // Set default graduation year to current year + 2
+    _graduationYear = DateTime.now().year + 2;
   }
 
   @override
@@ -57,68 +52,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     super.dispose();
   }
 
-  Future<void> _fetchUserProfile() async {
-    setState(() {
-      _isProfileLoading = true;
-    });
-
-    try {
-      final response = await http.get(
-        Uri.parse('$apiUrl/profile'),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        setState(() {
-          _userProfile = data;
-          _usernameController.text = data['username'] ?? '';
-          _universityController.text = data['university'] ?? '';
-          _graduationYear = data['graduation_year'];
-          _isProfileLoading = false;
-        });
-
-        // Add listeners to track modifications
-        _usernameController.addListener(() {
-          if (_usernameController.text != _userProfile?['username']) {
-            setState(() {
-              _usernameModified = true;
-            });
-          } else {
-            setState(() {
-              _usernameModified = false;
-            });
-          }
-        });
-
-        _universityController.addListener(() {
-          if (_universityController.text != _userProfile?['university']) {
-            setState(() {
-              _universityModified = true;
-            });
-          } else {
-            setState(() {
-              _universityModified = false;
-            });
-          }
-        });
-      } else {
-        setState(() {
-          _errorMessage = 'Failed to load profile';
-          _isProfileLoading = false;
-        });
-      }
-    } catch (e) {
-      setState(() {
-        _errorMessage = 'Connection error: ${e.toString()}';
-        _isProfileLoading = false;
-      });
-    }
-  }
-
-  Future<void> _updateProfile() async {
+  void _updateProfile() {
     if (!_validateForm()) return;
 
     // Check if any changes were made
@@ -134,54 +68,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       _errorMessage = null;
     });
 
-    try {
-      final Map<String, dynamic> updateData = {};
-
-      // Only include fields that were modified
-      if (_usernameModified) {
-        updateData['username'] = _usernameController.text.trim();
-      }
-
-      if (_universityModified) {
-        updateData['university'] = _universityController.text.trim();
-      }
-
-      if (_graduationYearModified) {
-        updateData['graduationYear'] = _graduationYear;
-      }
-
-      // Only include password if the user wants to change it
-      if (_isPasswordChangeRequested) {
-        updateData['password'] = _passwordController.text;
-      }
-
-      final response = await http.put(
-        Uri.parse('$apiUrl/profile'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(updateData),
-      );
-
-      final data = jsonDecode(response.body);
-
-      if (response.statusCode == 200) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Profile updated successfully!')),
-          );
-          Navigator.pop(context);
-        }
-      } else {
+    // Simulate loading
+    Future.delayed(const Duration(seconds: 1), () {
+      if (mounted) {
         setState(() {
-          _errorMessage = data['message'] ?? 'Failed to update profile';
           _isLoading = false;
         });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Profile updated successfully!')),
+        );
+        Navigator.pop(context);
       }
-    } catch (e) {
-      setState(() {
-        _errorMessage = 'Connection error: ${e.toString()}';
-        _isLoading = false;
-      });
-    }
+    });
   }
 
   bool _validateForm() {
@@ -265,9 +163,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         title: const Text('Edit Profile'),
         backgroundColor: const Color(0xFF4285F4),
       ),
-      body: _isProfileLoading
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
@@ -329,7 +225,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   onChanged: (value) {
                     setState(() {
                       _graduationYear = value;
-                      _graduationYearModified = value != _userProfile?['graduation_year'];
+                      _graduationYearModified = true;
                       _graduationYearError = null;
                     });
                   },
@@ -380,7 +276,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ),
                 _buildHelpText(
                   'Password must be at least 8 characters, not start with a number, '
-                      'and contain letters, numbers, and special characters.',
+                  'and contain letters, numbers, and special characters.',
                 ),
                 const SizedBox(height: 20),
                 _buildFieldLabel('Confirm New Password'),
@@ -425,15 +321,41 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   ),
                   child: _isLoading
                       ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 2,
-                    ),
-                  )
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
                       : const Text(
-                    'Save Changes',
+                          'Save Changes',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const DeactivateAccountScreen(),
+                      ),
+                    );
+                  },
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.red,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25),
+                      side: const BorderSide(color: Colors.red),
+                    ),
+                  ),
+                  child: const Text(
+                    'Deactivate Account',
                     style: TextStyle(fontSize: 16),
                   ),
                 ),
@@ -494,12 +416,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         ),
         suffixIcon: toggleObscure != null
             ? IconButton(
-          icon: Icon(
-            obscureText ? Icons.visibility_off : Icons.visibility,
-            color: Colors.grey,
-          ),
-          onPressed: toggleObscure,
-        )
+                icon: Icon(
+                  obscureText ? Icons.visibility_off : Icons.visibility,
+                  color: Colors.grey,
+                ),
+                onPressed: toggleObscure,
+              )
             : null,
       ),
     );
