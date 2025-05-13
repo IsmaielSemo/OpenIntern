@@ -25,25 +25,48 @@ class AIService {
       );
 
       if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-        // Try to extract the generated content from the backend's response
-        // The OpenRouter response is inside responseData['choices'][0]['message']['content']
-        if (responseData['choices'] != null &&
-            responseData['choices'][0]['message'] != null &&
-            responseData['choices'][0]['message']['content'] != null) {
-          final generatedText = responseData['choices'][0]['message']['content'];
-          final jsonMatch = RegExp(r'\{[\s\S]*\}').firstMatch(generatedText);
-          if (jsonMatch != null) {
-            return jsonDecode(jsonMatch.group(0)!);
-          }
-        }
-        throw Exception('Failed to parse AI response');
+        // The backend already parses and returns clean JSON, so we can directly decode it
+        return jsonDecode(response.body);
       } else {
         print('Backend error: ${response.body}');
         throw Exception('Failed to generate content: ${response.statusCode} - ${response.body}');
       }
     } catch (e) {
+      print('Error in generateCoverLetterAndCourses: $e');
       throw Exception('Error generating content: $e');
     }
   }
-} 
+
+  Future<Map<String, dynamic>> generateContent({
+    required String jobTitle,
+    required String company,
+    required List<String> requiredSkills,
+    required String detailedRequirements,
+    required String mode,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse('http://localhost:3000/generate'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'jobTitle': jobTitle,
+          'company': company,
+          'requiredSkills': requiredSkills,
+          'detailedRequirements': detailedRequirements,
+          'mode': mode,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data;
+      } else {
+        print('Backend error: ${response.body}');
+        throw Exception('Failed to generate content: ${response.statusCode} - ${response.body}');
+      }
+    } catch (e) {
+      print('Error in generateContent: $e');
+      throw Exception('Error generating content: $e');
+    }
+  }
+}
