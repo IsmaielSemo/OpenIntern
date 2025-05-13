@@ -10,6 +10,8 @@ import 'settingsscreen.dart';
 import 'models/internship.dart';
 import 'editprofilescreen.dart';
 import 'ResumeParserPage.dart';
+import 'services/ai_service.dart';
+import 'ace_offer_page.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -326,6 +328,34 @@ class _HomeScreenState extends State<HomeScreen>
                         padding: const EdgeInsets.symmetric(vertical: 12),
                       ),
                       onPressed: () async {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AceOfferPage(
+                              internship: internship,
+                            ),
+                          ),
+                        );
+                      },
+                      child: const Text(
+                        'Ace this offer',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey[200],
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                      onPressed: () async {
                         final Uri url = Uri.parse(internship.url);
                         if (await canLaunchUrl(url)) {
                           await launchUrl(url);
@@ -334,7 +364,7 @@ class _HomeScreenState extends State<HomeScreen>
                       child: const Text(
                         'Apply Now',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Colors.black87,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
@@ -347,6 +377,30 @@ class _HomeScreenState extends State<HomeScreen>
           ),
         );
       },
+    );
+  }
+
+  void _showLoadingDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: const [
+              CircularProgressIndicator(),
+              SizedBox(height: 16),
+              Text(
+                'Generating your AI cover letter...',
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
