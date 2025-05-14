@@ -3,10 +3,10 @@ name: Flutter CI/CD
 on:
   push:
     branches:
-      - main
+      - ganna
   pull_request:
     branches:
-      - main
+      - ganna
 
 jobs:
   build:
