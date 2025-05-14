@@ -20,7 +20,8 @@
       "php",
       "sql",
       "ai"
-    ]
+    ],
+    "id": "1"
   },
   {
     "title": "Full stack Developer (.Net Core & Angular)",
@@ -53,7 +54,8 @@
       "css",
       ".net",
       "java"
-    ]
+    ],
+    "id": "2"
   },
   {
     "title": "Growth Marketing Internship",
@@ -72,7 +74,8 @@
     "additional_skills": [
       "git",
       "ai"
-    ]
+    ],
+    "id": "3"
   },
   {
     "title": "Program Developer",
@@ -103,7 +106,8 @@
       "css",
       "php",
       "java"
-    ]
+    ],
+    "id": "4"
   },
   {
     "title": "Software Tester - internship - Remotely",
@@ -122,7 +126,8 @@
     "additional_skills": [
       "scrum",
       "ai"
-    ]
+    ],
+    "id": "5"
   },
   {
     "title": "Software engineer",
@@ -141,7 +146,8 @@
     "additional_skills": [
       "java",
       "ai"
-    ]
+    ],
+    "id": "6"
   },
   {
     "title": "Software Developer",
@@ -172,7 +178,8 @@
       ".net",
       "python",
       "java"
-    ]
+    ],
+    "id": "7"
   },
   {
     "title": "Senior .Net Developer",
@@ -195,7 +202,8 @@
       ".net",
       "sql",
       "ai"
-    ]
+    ],
+    "id": "8"
   },
   {
     "title": "Full-stack Software Engineer",
@@ -222,7 +230,8 @@
       "node",
       "kubernetes",
       "java"
-    ]
+    ],
+    "id": "9"
   },
   {
     "title": "AI Engineer",
@@ -245,7 +254,8 @@
       "python",
       "sql",
       "ai"
-    ]
+    ],
+    "id": "10"
   },
   {
     "title": "Titan IGNITE Management Trainee Program",
@@ -262,7 +272,8 @@
     "detailed_requirements": "Internship DetailsExperience Needed:Not SpecifiedCareer Level:Entry Level (Junior Level / Fresh Grad)Education Level:Not SpecifiedSalary:paidJob Categories:Accounting/FinanceEngineering - Construction/Civil/ArchitectureMarketing/PR/AdvertisingSkills And Tools:MS OfficeEnglish TrainingEnglish EducationCommunicationFinanceEngineeringMarketingTreasuryAccountingSupply ChainElectrical EngineeringMechanical EngineeringChemistryChemical Engineering",
     "additional_skills": [
       "ai"
-    ]
+    ],
+    "id": "11"
   },
   {
     "title": "Senior Software Engineer",
@@ -289,7 +300,8 @@
       "docker",
       "django",
       "python"
-    ]
+    ],
+    "id": "12"
   },
   {
     "title": "Software Engineer",
@@ -306,7 +318,8 @@
     "detailed_requirements": "Job DetailsExperience Needed:2 to 5 yearsCareer Level:Experienced (Non-Manager)Education Level:Bachelor's DegreeSalary:ConfidentialJob Categories:IT/Software DevelopmentQualitySkills And Tools:Software DevelopmentQuality AssuranceInformation Technology (IT)ISTQBSoftware TestingComputer ScienceTesting",
     "additional_skills": [
       "ai"
-    ]
+    ],
+    "id": "13"
   },
   {
     "title": "Software Development Manager - Remote (Full Time / Part Time)",
@@ -329,7 +342,8 @@
       "agile",
       "docker",
       "ai"
-    ]
+    ],
+    "id": "14"
   },
   {
     "title": "Software Developer .NET (Backoffice / Backend)",
@@ -354,7 +368,8 @@
       "sql",
       ".net",
       "java"
-    ]
+    ],
+    "id": "15"
   },
   {
     "title": "Presales Engineer",
@@ -371,7 +386,8 @@
     "detailed_requirements": "Job DetailsExperience Needed:More than 3 yearsCareer Level:Experienced (Non-Manager)Education Level:Not SpecifiedSalary:ConfidentialJob Categories:IT/Software DevelopmentSales/RetailEngineering - Telecom/TechnologySkills And Tools:Pre-SalesSales engineersales skillsScienceSoftwareSoftware DevelopmentComputer ScienceInformation Technology (IT)NetworkingSalesEnglishEngineering",
     "additional_skills": [
       "ai"
-    ]
+    ],
+    "id": "16"
   },
   {
     "title": "Senior QA Engineer",
@@ -392,7 +408,8 @@
       "angular",
       "php",
       "ai"
-    ]
+    ],
+    "id": "17"
   },
   {
     "title": "Engineer",
@@ -411,7 +428,8 @@
     "additional_skills": [
       "python",
       "ai"
-    ]
+    ],
+    "id": "18"
   },
   {
     "title": "Process Quality Internship - Alexandria",
@@ -428,7 +446,8 @@
     "detailed_requirements": "Internship DetailsExperience Needed:0 to 1 yearCareer Level:Entry Level (Junior Level / Fresh Grad)Education Level:Bachelor's DegreeSalary:5000 to 5000 EGP Per MonthJob Categories:QualitySkills And Tools:ChemistryqualityScience",
     "additional_skills": [
       "ai"
-    ]
+    ],
+    "id": "19"
   },
   {
     "title": "Software Engineer",
@@ -447,7 +466,8 @@
     "additional_skills": [
       "sql",
       "ai"
-    ]
+    ],
+    "id": "20"
   },
   {
     "title": "Back End Developer (Golang)",
@@ -464,7 +484,8 @@
     "detailed_requirements": "Job DetailsExperience Needed:3 to 6 yearsCareer Level:Experienced (Non-Manager)Education Level:Bachelor's DegreeSalary:ConfidentialJob Categories:IT/Software DevelopmentEngineering - Telecom/TechnologySkills And Tools:backendGolangComputer ScienceProgramming LanguageAPISoftware DevelopmentGraphQL",
     "additional_skills": [
       "ai"
-    ]
+    ],
+    "id": "21"
   },
   {
     "title": "Travel Consultant - Internship - Males only",
@@ -481,7 +502,8 @@
     "detailed_requirements": "Job DetailsExperience Needed:0 to 1 yearCareer Level:Entry Level (Junior Level / Fresh Grad)Education Level:Not SpecifiedSalary:ConfidentialJob Categories:Tourism/TravelSkills And Tools:TravelTourismCustomer ServiceHospitalityOperations ManagementTravel CoordinationCommunicationfluencyMultitaskingfresh graduate",
     "additional_skills": [
       "ai"
-    ]
+    ],
+    "id": "22"
   },
   {
     "title": "Senior Android Developer",
@@ -502,7 +524,8 @@
       "git",
       "kotlin",
       "ai"
-    ]
+    ],
+    "id": "23"
   },
   {
     "title": "Software Developer",
@@ -525,7 +548,8 @@
       "java",
       "sql",
       "ai"
-    ]
+    ],
+    "id": "24"
   },
   {
     "title": "Software Testing Engineer",
@@ -544,7 +568,8 @@
     "additional_skills": [
       "css",
       "ai"
-    ]
+    ],
+    "id": "25"
   },
   {
     "title": "Flutter developer (Med: Senior)",
@@ -563,7 +588,8 @@
     "additional_skills": [
       "java",
       "ai"
-    ]
+    ],
+    "id": "26"
   },
   {
     "title": "Smart Manufacturing Internship - Alexandria",
@@ -580,7 +606,8 @@
     "detailed_requirements": "Internship DetailsExperience Needed:0 to 1 yearCareer Level:Entry Level (Junior Level / Fresh Grad)Education Level:Bachelor's DegreeSalary:5000 to 5000 EGP Per MonthJob Categories:Engineering - Telecom/TechnologyEngineering - Mechanical/ElectricalSkills And Tools:EngineeringComputer Engineeringsmart manufacturingManufacturingIndustrial EngineeringComputer ScienceAutoCAD",
     "additional_skills": [
       "ai"
-    ]
+    ],
+    "id": "27"
   },
   {
     "title": "Product Owner - internship - Remotely",
@@ -601,7 +628,8 @@
       "agile",
       "scrum",
       "ai"
-    ]
+    ],
+    "id": "28"
   },
   {
     "title": "Senior C++ Developer",
@@ -622,7 +650,8 @@
       "linux",
       "c++",
       "ai"
-    ]
+    ],
+    "id": "29"
   },
   {
     "title": "Senior Java Developer",
@@ -645,7 +674,8 @@
       "java",
       "sql",
       "ai"
-    ]
+    ],
+    "id": "30"
   },
   {
     "title": "Full Stack Developer",
@@ -668,7 +698,8 @@
       "java",
       "ai",
       "git"
-    ]
+    ],
+    "id": "31"
   },
   {
     "title": "Senior AI Developer",
@@ -691,7 +722,8 @@
       "python",
       "ai",
       "aws"
-    ]
+    ],
+    "id": "32"
   },
   {
     "title": "Technical Team Lead",
@@ -714,7 +746,8 @@
       "java",
       "python",
       "ai"
-    ]
+    ],
+    "id": "33"
   },
   {
     "title": "Senior Front-End Developer (Angular )",
@@ -747,7 +780,8 @@
       "css",
       ".net",
       "java"
-    ]
+    ],
+    "id": "34"
   },
   {
     "title": "Senior Front End Developer - Vue",
@@ -776,7 +810,8 @@
       "css",
       "vue",
       "java"
-    ]
+    ],
+    "id": "35"
   },
   {
     "title": "Senior Software Developer",
@@ -793,7 +828,8 @@
     "detailed_requirements": "Job DetailsExperience Needed:4 to 6 yearsCareer Level:Experienced (Non-Manager)Education Level:Not SpecifiedSalary:ConfidentialJob Categories:Business DevelopmentIT/Software DevelopmentSkills And Tools:DesignSoftware DevelopmentEngineering",
     "additional_skills": [
       "ai"
-    ]
+    ],
+    "id": "36"
   },
   {
     "title": "Senior . Net Developer",
@@ -810,7 +846,8 @@
     "detailed_requirements": "Job DetailsExperience Needed:4 to 6 yearsCareer Level:Experienced (Non-Manager)Education Level:Not SpecifiedSalary:ConfidentialJob Categories:IT/Software DevelopmentEngineering - Telecom/TechnologySkills And Tools:Computer ScienceDevelopmentInformation Technology (IT)Software DevelopmentSoftware Engineering",
     "additional_skills": [
       "ai"
-    ]
+    ],
+    "id": "37"
   },
   {
     "title": ".NET developer",
@@ -829,7 +866,8 @@
     "additional_skills": [
       ".net",
       "ai"
-    ]
+    ],
+    "id": "38"
   },
   {
     "title": "Senior .NET Developer",
@@ -854,7 +892,8 @@
       "css",
       ".net",
       "html"
-    ]
+    ],
+    "id": "39"
   },
   {
     "title": "AI & Software Trainer",
@@ -875,7 +914,8 @@
       "machine learning",
       "react",
       "ai"
-    ]
+    ],
+    "id": "40"
   },
   {
     "title": "HR Internship Opportunity – Join Our Team!",
@@ -892,7 +932,8 @@
     "detailed_requirements": "Internship DetailsExperience Needed:Not SpecifiedCareer Level:Entry Level (Junior Level / Fresh Grad)Education Level:Not SpecifiedSalary:paidJob Categories:Human ResourcesSkills And Tools:Human Resources (HR)Talent acquisition",
     "additional_skills": [
       "ai"
-    ]
+    ],
+    "id": "41"
   },
   {
     "title": "Senior .Net Developer",
@@ -919,7 +960,8 @@
       "sql",
       ".net",
       "java"
-    ]
+    ],
+    "id": "42"
   },
   {
     "title": "Software Testing Instructor",
@@ -942,7 +984,8 @@
       "java",
       "agile",
       "ai"
-    ]
+    ],
+    "id": "43"
   },
   {
     "title": "Developer ( .Net )",
@@ -961,7 +1004,8 @@
     "additional_skills": [
       ".net",
       "ai"
-    ]
+    ],
+    "id": "44"
   },
   {
     "title": "HR Internship - HR Administration & Talent Acquisition",
@@ -978,7 +1022,8 @@
     "detailed_requirements": "Internship DetailsExperience Needed:0 to 1 yearCareer Level:Entry Level (Junior Level / Fresh Grad)Education Level:Bachelor's DegreeSalary:paidJob Categories:Business DevelopmentHuman ResourcesMarketing/PR/AdvertisingSkills And Tools:Human Resources (HR)Human ResourcesHRRecruitmentbusinessBusiness AdministrationHR SpecialistHR SystemsHR Strategy",
     "additional_skills": [
       "ai"
-    ]
+    ],
+    "id": "45"
   },
   {
     "title": "Software Developer",
@@ -1007,7 +1052,8 @@
       "css",
       ".net",
       "java"
-    ]
+    ],
+    "id": "46"
   },
   {
     "title": "Senior AI Engineer",
@@ -1030,7 +1076,8 @@
       "machine learning",
       "python",
       "ai"
-    ]
+    ],
+    "id": "47"
   },
   {
     "title": "Senior Android Developer",
@@ -1051,7 +1098,8 @@
       "git",
       "java",
       "ai"
-    ]
+    ],
+    "id": "48"
   },
   {
     "title": "System Integration Engineer",
@@ -1072,7 +1120,8 @@
       "java",
       "python",
       "ai"
-    ]
+    ],
+    "id": "49"
   },
   {
     "title": "Mid - Level / Senior Quality Control Engineer",
@@ -1091,7 +1140,8 @@
     "additional_skills": [
       "agile",
       "ai"
-    ]
+    ],
+    "id": "50"
   },
   {
     "title": "Senior Software Tester",
@@ -1110,7 +1160,8 @@
     "additional_skills": [
       "agile",
       "ai"
-    ]
+    ],
+    "id": "51"
   },
   {
     "title": "Senior Pre-Sales Engineer",
@@ -1127,7 +1178,8 @@
     "detailed_requirements": "Job DetailsExperience Needed:3 to 5 yearsCareer Level:Experienced (Non-Manager)Education Level:Not SpecifiedSalary:ConfidentialJob Categories:Writing/EditorialIT/Software DevelopmentEngineering - Telecom/TechnologySkills And Tools:PresalesInformation Technology (IT)Computer EngineeringCommunication skillsEngineeringSoftware DevelopmentCloudsales skillsSoftware",
     "additional_skills": [
       "ai"
-    ]
+    ],
+    "id": "52"
   },
   {
     "title": "Freelance Architect/Engineer (Work From Home)",
@@ -1144,7 +1196,8 @@
     "detailed_requirements": "Job DetailsExperience Needed:1 to 3 yearsCareer Level:Entry Level (Junior Level / Fresh Grad)Education Level:Not SpecifiedSalary:Confidential, 60% per studentJob Categories:Engineering - Construction/Civil/ArchitectureEducation/TeachingSkills And Tools:LumionAutoCAD SoftwareAutodesk 3ds Maxvray",
     "additional_skills": [
       "ai"
-    ]
+    ],
+    "id": "53"
   },
   {
     "title": "Senior Devops Engineer",
@@ -1171,7 +1224,8 @@
       "docker",
       "python",
       "kubernetes"
-    ]
+    ],
+    "id": "54"
   },
   {
     "title": "Senior process engineer",
@@ -1188,7 +1242,8 @@
     "detailed_requirements": "Job DetailsExperience Needed:3 to 5 yearsCareer Level:Experienced (Non-Manager)Education Level:Bachelor's DegreeSalary:ConfidentialJob Categories:IT/Software DevelopmentEngineering - Telecom/TechnologyEngineering - Mechanical/ElectricalSkills And Tools:communicationsComputer ScienceElectronicsElectronics EngineeringEngineeringElectricalInformation Technology (IT)ManufacturingProcessSoftware DevelopmenttechnicalMobile",
     "additional_skills": [
       "ai"
-    ]
+    ],
+    "id": "55"
   },
   {
     "title": "Oracle Apps Developer",
@@ -1209,7 +1264,8 @@
       "linux",
       "sql",
       "ai"
-    ]
+    ],
+    "id": "56"
   },
   {
     "title": "Cloud Infrastructure Engineer",
@@ -1246,7 +1302,8 @@
       "python",
       "kubernetes",
       "linux"
-    ]
+    ],
+    "id": "57"
   },
   {
     "title": "Backend Engineer",
@@ -1275,7 +1332,8 @@
       "nosql",
       "mongodb",
       "mysql"
-    ]
+    ],
+    "id": "58"
   },
   {
     "title": "IT Engineer",
@@ -1292,7 +1350,8 @@
     "detailed_requirements": "Job DetailsExperience Needed:1 to 2 yearsCareer Level:Entry Level (Junior Level / Fresh Grad)Education Level:Not SpecifiedSalary:Confidential, Medical Insurance - Quarter Bonus - Transportation, etc.Job Categories:Installation/Maintenance/RepairIT/Software DevelopmentEngineering - Telecom/TechnologySkills And Tools:MCSACCNAComputer ScienceInformation technologyInformation Technology (IT)Microsoft OfficeSoftware DevelopmentSoftware EngineeringVmwareITA+N+NTIITI",
     "additional_skills": [
       "ai"
-    ]
+    ],
+    "id": "59"
   },
   {
     "title": "Sales Engineer",
@@ -1309,7 +1368,8 @@
     "detailed_requirements": "Job DetailsExperience Needed:2 to 5 yearsCareer Level:Experienced (Non-Manager)Education Level:Bachelor's DegreeSalary:ConfidentialJob Categories:Sales/RetailEngineering - Mechanical/ElectricalSkills And Tools:Sales engineerSalesEngineeringCommunication skillssales skillsSales TargetSoftware DevelopmenttechnicalSellingDevelopment",
     "additional_skills": [
       "ai"
-    ]
+    ],
+    "id": "60"
   },
   {
     "title": "Computer science instructor",
@@ -1326,7 +1386,8 @@
     "detailed_requirements": "Job DetailsExperience Needed:1 to 7 yearsCareer Level:Experienced (Non-Manager)Education Level:Bachelor's DegreeGender:FemaleSalary:ConfidentialJob Categories:IT/Software DevelopmentTraining/InstructorSkills And Tools:Computer ScienceComputer SkillsTeachingInformation Technology (IT)Software DevelopmentcomputerDesignScienceSkillsSoftware Engineering",
     "additional_skills": [
       "ai"
-    ]
+    ],
+    "id": "61"
   },
   {
     "title": "Planning Engineer",
@@ -1343,7 +1404,8 @@
     "detailed_requirements": "Job DetailsExperience Needed:3 to 5 yearsCareer Level:Experienced (Non-Manager)Education Level:Bachelor's DegreeSalary:ConfidentialJob Categories:Engineering - Construction/Civil/ArchitectureProject/Program ManagementEngineering - Mechanical/ElectricalSkills And Tools:Civil EngineeringProject ManagementCost ControlEngineeringPrimaveraSoftwareConstructionPMPPlanningCivilManagementProject PlanningProject",
     "additional_skills": [
       "ai"
-    ]
+    ],
+    "id": "62"
   },
   {
     "title": "Senior Software Tester",
@@ -1362,7 +1424,8 @@
     "additional_skills": [
       "sql",
       "ai"
-    ]
+    ],
+    "id": "63"
   },
   {
     "title": "Senior Linux Engineer",
@@ -1383,7 +1446,8 @@
       "kubernetes",
       "linux",
       "ai"
-    ]
+    ],
+    "id": "64"
   },
   {
     "title": "Senior Full Stack Engineer",
@@ -1412,7 +1476,8 @@
       "react",
       "python",
       "java"
-    ]
+    ],
+    "id": "65"
   },
   {
     "title": "Value Engineer",
@@ -1429,7 +1494,8 @@
     "detailed_requirements": "Job DetailsExperience Needed:3 to 5 yearsCareer Level:Experienced (Non-Manager)Education Level:Bachelor's DegreeSalary:ConfidentialJob Categories:Engineering - Construction/Civil/ArchitectureProject/Program ManagementEngineering - Mechanical/ElectricalSkills And Tools:Civil EngineeringProject ManagementCost ControlEngineeringPrimaveraSoftwareConstruction",
     "additional_skills": [
       "ai"
-    ]
+    ],
+    "id": "66"
   },
   {
     "title": "DevOps Engineer",
@@ -1452,7 +1518,8 @@
       "linux",
       "docker",
       "ai"
-    ]
+    ],
+    "id": "67"
   },
   {
     "title": "UX/UI - Internship - Alexandria",
@@ -1469,7 +1536,8 @@
     "detailed_requirements": "Internship DetailsExperience Needed:Not SpecifiedCareer Level:Entry Level (Junior Level / Fresh Grad)Education Level:Not SpecifiedSalary:3000 to 3000 EGP Per MonthJob Categories:IT/Software DevelopmentSkills And Tools:DesignUXuiWireframewireframe.ccillustratorFigmaInformation Technology (IT)TechnologyphotoshopInVisionComputer Science",
     "additional_skills": [
       "ai"
-    ]
+    ],
+    "id": "68"
   },
   {
     "title": "Software Developer \"Outsourced Cash team\"",
@@ -1496,7 +1564,8 @@
       "sql",
       "linux",
       "java"
-    ]
+    ],
+    "id": "69"
   },
   {
     "title": "Wodrpress / PHP - Alexandria - internship",
@@ -1519,7 +1588,8 @@
       "html",
       "css",
       "ai"
-    ]
+    ],
+    "id": "70"
   },
   {
     "title": "Data Engineer",
@@ -1542,7 +1612,8 @@
       "python",
       "sql",
       "ai"
-    ]
+    ],
+    "id": "71"
   },
   {
     "title": "Senior Full Stack Developer .Net + Angular",
@@ -1579,7 +1650,8 @@
       "css",
       ".net",
       "java"
-    ]
+    ],
+    "id": "72"
   },
   {
     "title": "Software Project Manager",
@@ -1600,7 +1672,8 @@
       "agile",
       "scrum",
       "ai"
-    ]
+    ],
+    "id": "73"
   },
   {
     "title": "Backend Developer",
@@ -1629,7 +1702,8 @@
       "php",
       "mysql",
       "linux"
-    ]
+    ],
+    "id": "74"
   },
   {
     "title": "Senior Sitecore Developer",
@@ -1648,7 +1722,8 @@
     "additional_skills": [
       "agile",
       "ai"
-    ]
+    ],
+    "id": "75"
   },
   {
     "title": "Software Developer \"Outsourced\"",
@@ -1671,7 +1746,8 @@
       "python",
       "sql",
       "ai"
-    ]
+    ],
+    "id": "76"
   },
   {
     "title": "Business Development Executive - Construction",
@@ -1688,7 +1764,8 @@
     "detailed_requirements": "Job DetailsExperience Needed:8 to 10 yearsCareer Level:Experienced (Non-Manager)Education Level:Bachelor's DegreeGender:MaleSalary:Confidential, - Medical insurance \n- Social insuranceJob Categories:Engineering - Construction/Civil/ArchitectureBusiness DevelopmentEngineering - OtherSkills And Tools:ArchitectureBusiness DevelopmentEngineeringPMPProject ManagementConstructionManagementSalesMBAsales skillsSales TargetSoftware",
     "additional_skills": [
       "ai"
-    ]
+    ],
+    "id": "77"
   },
   {
     "title": "Senior Full Stack Developer (.NET core , Angular 8+) Onsite",
@@ -1723,7 +1800,8 @@
       ".net",
       "mysql",
       "java"
-    ]
+    ],
+    "id": "78"
   },
   {
     "title": "Odoo Developer (80% Remote)",
@@ -1744,7 +1822,8 @@
       "html",
       "python",
       "ai"
-    ]
+    ],
+    "id": "79"
   },
   {
     "title": "PHP Developer",
@@ -1775,7 +1854,8 @@
       "php",
       "mysql",
       "java"
-    ]
+    ],
+    "id": "80"
   },
   {
     "title": "Angular Front-End Developer",
@@ -1806,7 +1886,8 @@
       "css",
       "mysql",
       "java"
-    ]
+    ],
+    "id": "81"
   },
   {
     "title": "Vue.Js Frontend Developer",
@@ -1837,7 +1918,8 @@
       "php",
       "vue",
       "java"
-    ]
+    ],
+    "id": "82"
   },
   {
     "title": "Mechanical Engineer",
@@ -1854,7 +1936,8 @@
     "detailed_requirements": "Job DetailsExperience Needed:2 to 4 yearsCareer Level:Entry Level (Junior Level / Fresh Grad)Education Level:Bachelor's DegreeGender:MaleSalary:ConfidentialJob Categories:Installation/Maintenance/RepairEngineering - Mechanical/ElectricalSkills And Tools:CADElectrical EngineeringEngineeringMaintenanceManufacturingMechanicalMechanical EngineeringMaterialsCAD Software",
     "additional_skills": [
       "ai"
-    ]
+    ],
+    "id": "83"
   },
   {
     "title": "Senior Front End Developer",
@@ -1879,7 +1962,8 @@
       "html",
       "angular",
       "java"
-    ]
+    ],
+    "id": "84"
   },
   {
     "title": "Full-Stack AI Tool Developer (React, Next.js, PostgreSQL, AWS Lambda)",
@@ -1908,7 +1992,8 @@
       "react",
       "artificial intelligence",
       "java"
-    ]
+    ],
+    "id": "85"
   },
   {
     "title": "Elevator Sales Engineer",
@@ -1925,7 +2010,8 @@
     "detailed_requirements": "Job DetailsExperience Needed:3 to 5 yearsCareer Level:Experienced (Non-Manager)Education Level:Bachelor's DegreeGender:MaleSalary:15000 to 18000 EGP Per MonthJob Categories:Engineering - Construction/Civil/ArchitectureSales/RetailEngineering - Mechanical/ElectricalSkills And Tools:SalesEngineeringsales skillsDevelopmentSoftware DevelopmenttechnicalSellingPresentationCommunicationSales Target",
     "additional_skills": [
       "ai"
-    ]
+    ],
+    "id": "86"
   },
   {
     "title": "Senior RPA Developer (UiPath)",
@@ -1942,7 +2028,8 @@
     "detailed_requirements": "Job DetailsExperience Needed:8 to 15 yearsCareer Level:Experienced (Non-Manager)Education Level:Bachelor's DegreeGender:MaleSalary:ConfidentialJob Categories:Business DevelopmentIT/Software DevelopmentEngineering - Telecom/TechnologySkills And Tools:PMPInformation Technology (IT)SoftwarePMIRisk ManagementProject ManagementSoftware EngineeringSDLCComputer ScienceEngineeringInformation technologySoftware Developmentcomputer",
     "additional_skills": [
       "ai"
-    ]
+    ],
+    "id": "87"
   },
   {
     "title": "Business Development Engineer",
@@ -1959,7 +2046,8 @@
     "detailed_requirements": "Job DetailsExperience Needed:1 to 3 yearsCareer Level:Entry Level (Junior Level / Fresh Grad)Education Level:Bachelor's DegreeSalary:Confidential, Family Medical, Commission, BonusJob Categories:Business DevelopmentSales/RetailSkills And Tools:Business DevelopmentCRMSalesNegotiationTechnical PresentationsClient RelationshipsMS Office SuiteCommunication",
     "additional_skills": [
       "ai"
-    ]
+    ],
+    "id": "88"
   },
   {
     "title": "Senior Devops Engineer",
@@ -1980,7 +2068,8 @@
       "kubernetes",
       "gcp",
       "ai"
-    ]
+    ],
+    "id": "89"
   },
   {
     "title": "Software Developer",
@@ -2007,7 +2096,8 @@
       "python",
       "mysql",
       "java"
-    ]
+    ],
+    "id": "90"
   },
   {
     "title": "Python Team Lead - AI & Python Engineering",
@@ -2030,7 +2120,8 @@
       "python",
       "docker",
       "aws"
-    ]
+    ],
+    "id": "91"
   },
   {
     "title": "Technical Project Manager",
@@ -2047,7 +2138,8 @@
     "detailed_requirements": "Job DetailsExperience Needed:More than 10 yearsCareer Level:Manager Education Level:Bachelor's DegreeSalary:ConfidentialJob Categories:Engineering - Construction/Civil/ArchitectureIT/Software DevelopmentProject/Program ManagementSkills And Tools:Computer ScienceDevelopmentEngineeringInformation Technology (IT)ITManagementEducationPMPProjectProject ManagementSoftware DevelopmentSoftwareOracleSoftware Project Management",
     "additional_skills": [
       "ai"
-    ]
+    ],
+    "id": "92"
   },
   {
     "title": "Back-end Developer (PHP)",
@@ -2078,7 +2170,8 @@
       "mysql",
       "linux",
       "java"
-    ]
+    ],
+    "id": "93"
   },
   {
     "title": "Senior PHP Developer",
@@ -2111,7 +2204,8 @@
       "php",
       "mysql",
       "java"
-    ]
+    ],
+    "id": "94"
   },
   {
     "title": "Back-end .NET Core Developer",
@@ -2136,7 +2230,8 @@
       "aws",
       "sql",
       ".net"
-    ]
+    ],
+    "id": "95"
   },
   {
     "title": "Senior SoftwareTesting Engineer",
@@ -2153,7 +2248,8 @@
     "detailed_requirements": "Job DetailsExperience Needed:More than 4 yearsCareer Level:Experienced (Non-Manager)Education Level:Bachelor's DegreeSalary:ConfidentialJob Categories:IT/Software DevelopmentQualityEngineering - Telecom/TechnologySkills And Tools:Quality ControlSoftware TestingInformation Technology (IT)Computer ScienceQCSecurity TestingAutomated TestingQAQuality AssuranceSoftware DevelopmentSoftware EngineeringQualityComputer EngineeringSoftware Tester",
     "additional_skills": [
       "ai"
-    ]
+    ],
+    "id": "96"
   },
   {
     "title": "Projects Engineer (Electrical Background)",
@@ -2170,7 +2266,8 @@
     "detailed_requirements": "Job DetailsExperience Needed:1 to 3 yearsCareer Level:Experienced (Non-Manager)Education Level:Not SpecifiedSalary:Confidential, Life and Medical Insurance, Quarter Bonus, Transportation, etc.Job Categories:Project/Program ManagementEngineering - Mechanical/ElectricalSkills And Tools:DesignElectrical EngineeringEngineeringProjectProject ManagementSoftware",
     "additional_skills": [
       "ai"
-    ]
+    ],
+    "id": "97"
   },
   {
     "title": "Senior QA Engineer",
@@ -2189,7 +2286,8 @@
     "additional_skills": [
       "agile",
       "ai"
-    ]
+    ],
+    "id": "98"
   },
   {
     "title": "Senior Automation QC Engineer",
@@ -2210,7 +2308,8 @@
       "java",
       "sql",
       "ai"
-    ]
+    ],
+    "id": "99"
   },
   {
     "title": "Unreal Developer",
@@ -2227,7 +2326,8 @@
     "detailed_requirements": "Job DetailsExperience Needed:3 to 5 yearsCareer Level:Experienced (Non-Manager)Education Level:Bachelor's DegreeSalary:ConfidentialJob Categories:IT/Software DevelopmentSkills And Tools:Software EngineeringUnreal EngineunrealSoftware DevelopmentGame developmentComputer Science",
     "additional_skills": [
       "ai"
-    ]
+    ],
+    "id": "100"
   },
   {
     "title": "Shopify Developer",
@@ -2248,7 +2348,8 @@
       "html",
       "css",
       "ai"
-    ]
+    ],
+    "id": "101"
   },
   {
     "title": "Software Engineer",
@@ -2279,7 +2380,8 @@
       "css",
       ".net",
       "java"
-    ]
+    ],
+    "id": "102"
   },
   {
     "title": "Backend Developer ( PHP & Laravel )",
@@ -2298,7 +2400,8 @@
     "additional_skills": [
       "php",
       "ai"
-    ]
+    ],
+    "id": "103"
   },
   {
     "title": "Senior IOS Engineer",
@@ -2317,7 +2420,8 @@
     "additional_skills": [
       "agile",
       "ai"
-    ]
+    ],
+    "id": "104"
   },
   {
     "title": "Spring Boot BackEnd Developer /Freelancer OR Full Time",
@@ -2338,7 +2442,8 @@
       "java",
       "mongodb",
       "ai"
-    ]
+    ],
+    "id": "105"
   },
   {
     "title": "Backend Developer",
@@ -2355,7 +2460,8 @@
     "detailed_requirements": "Job DetailsExperience Needed:2 to 5 yearsCareer Level:Experienced (Non-Manager)Education Level:Not SpecifiedSalary:ConfidentialJob Categories:IT/Software DevelopmentSkills And Tools:back-endComputer ScienceInformation Technology (IT)EngineeringSoftware",
     "additional_skills": [
       "ai"
-    ]
+    ],
+    "id": "106"
   },
   {
     "title": "Senior Process Engineer",
@@ -2372,7 +2478,8 @@
     "detailed_requirements": "Job DetailsExperience Needed:3 to 5 yearsCareer Level:Experienced (Non-Manager)Education Level:Not SpecifiedSalary:ConfidentialJob Categories:Engineering - Telecom/TechnologyEngineering - Mechanical/ElectricalSkills And Tools:Information Technology (IT)Industrial EngineeringCommunication skillsEngineeringComputer ScienceMechanicalManufacturingSoftware DevelopmentProcessIndustrialSteelCommunication",
     "additional_skills": [
       "ai"
-    ]
+    ],
+    "id": "107"
   },
   {
     "title": "Data Engineer",
@@ -2393,7 +2500,8 @@
       "python",
       "sql",
       "ai"
-    ]
+    ],
+    "id": "108"
   },
   {
     "title": "Sales Engineer",
@@ -2410,7 +2518,8 @@
     "detailed_requirements": "Job DetailsExperience Needed:2 to 7 yearsCareer Level:Experienced (Non-Manager)Education Level:Bachelor's DegreeSalary:Confidential, - Competitive salary and commission structure.\n- Health and wellness benefits.\n- Opportunities for professional development and career growth.\n- Collaborative and supportive work environment.Job Categories:Business DevelopmentSales/RetailEngineering - Oil & Gas/EnergySkills And Tools:SalesSales engineerengineerOil FieldoilandgasTrainingBusiness Developmentsales skillsCustomer CaretechnicalSoftwarebusinessEngineeringSales TargetNegotiationCRMAccount Management",
     "additional_skills": [
       "ai"
-    ]
+    ],
+    "id": "109"
   },
   {
     "title": "Junior Full Stack Developer",
@@ -2431,7 +2540,8 @@
       "javascript",
       "java",
       "ai"
-    ]
+    ],
+    "id": "110"
   },
   {
     "title": "Senior .Net Full Stack Developer",
@@ -2464,7 +2574,8 @@
       "css",
       ".net",
       "java"
-    ]
+    ],
+    "id": "111"
   },
   {
     "title": "AI Solutions Architect",
@@ -2491,7 +2602,8 @@
       "git",
       "python",
       "java"
-    ]
+    ],
+    "id": "112"
   },
   {
     "title": "Software Project Manager",
@@ -2512,7 +2624,8 @@
       "agile",
       "scrum",
       "ai"
-    ]
+    ],
+    "id": "113"
   },
   {
     "title": "Senior Front End Developer",
@@ -2531,7 +2644,8 @@
     "additional_skills": [
       "angular",
       "ai"
-    ]
+    ],
+    "id": "114"
   },
   {
     "title": "Senior PHP Developer (Laravel Expert)",
@@ -2558,7 +2672,8 @@
       "sql",
       "php",
       "mysql"
-    ]
+    ],
+    "id": "115"
   },
   {
     "title": "Oracle Developer",
@@ -2577,7 +2692,8 @@
     "additional_skills": [
       "sql",
       "ai"
-    ]
+    ],
+    "id": "116"
   },
   {
     "title": "Senior Python Developer",
@@ -2604,7 +2720,8 @@
       "django",
       "python",
       "mysql"
-    ]
+    ],
+    "id": "117"
   },
   {
     "title": "Software Testing Internship",
@@ -2623,7 +2740,8 @@
     "additional_skills": [
       "agile",
       "ai"
-    ]
+    ],
+    "id": "118"
   },
   {
     "title": "Full Stack Developer",
@@ -2654,7 +2772,8 @@
       "mongodb",
       "mysql",
       "java"
-    ]
+    ],
+    "id": "119"
   },
   {
     "title": "Backend Developer",
@@ -2671,7 +2790,8 @@
     "detailed_requirements": "Job DetailsExperience Needed:0 to 3 yearsCareer Level:Entry Level (Junior Level / Fresh Grad)Education Level:Not SpecifiedSalary:ConfidentialJob Categories:IT/Software DevelopmentSkills And Tools:CI/CDAndroidComputer ScienceSoftware EngineeringSoftwareiOSRESTDevelopmentInformation Technology (IT)",
     "additional_skills": [
       "ai"
-    ]
+    ],
+    "id": "120"
   },
   {
     "title": "Frontend Developer",
@@ -2698,7 +2818,8 @@
       "react",
       "css",
       "java"
-    ]
+    ],
+    "id": "121"
   },
   {
     "title": "Senior Oracle Developer",
@@ -2717,7 +2838,8 @@
     "additional_skills": [
       "sql",
       "ai"
-    ]
+    ],
+    "id": "122"
   },
   {
     "title": "Senior Design Engineer",
@@ -2734,7 +2856,8 @@
     "detailed_requirements": "Job DetailsExperience Needed:1 to 5 yearsCareer Level:Experienced (Non-Manager)Education Level:Not SpecifiedSalary:ConfidentialJob Categories:Engineering - Telecom/TechnologySkills And Tools:AutoCADCivil EngineeringCivilComputer ScienceConstructionEngineeringInformation Technology (IT)MS OfficeProjectRevitSAPSoftware Development",
     "additional_skills": [
       "ai"
-    ]
+    ],
+    "id": "123"
   },
   {
     "title": "Senior Flutter Developer",
@@ -2757,7 +2880,8 @@
       "agile",
       "scrum",
       "ai"
-    ]
+    ],
+    "id": "124"
   },
   {
     "title": "Front End Developer",
@@ -2774,7 +2898,8 @@
     "detailed_requirements": "Job DetailsExperience Needed:0 to 3 yearsCareer Level:Entry Level (Junior Level / Fresh Grad)Education Level:Not SpecifiedSalary:ConfidentialJob Categories:IT/Software DevelopmentSkills And Tools:CI/CDAndroidComputer ScienceSoftware EngineeringSoftwareiOSRESTDevelopmentInformation Technology (IT)",
     "additional_skills": [
       "ai"
-    ]
+    ],
+    "id": "125"
   },
   {
     "title": "Senior Mechanical Installation Engineer",
@@ -2791,7 +2916,8 @@
     "detailed_requirements": "Job DetailsExperience Needed:5 to 8 yearsCareer Level:Experienced (Non-Manager)Education Level:Not SpecifiedSalary:ConfidentialJob Categories:Installation/Maintenance/RepairManufacturing/ProductionProject/Program ManagementSkills And Tools:AutoCAD3DConstructionHVACEngineeringMaintenanceMechanical EngineeringIndustrialMechanical InstallationsElectrical InstallationsInstallationsMechanicalPlumbingHVAC SystemsHVAC EngineeringHVAC DesignAutoCAD SoftwareAutocad MechanicalInstallationSee More",
     "additional_skills": [
       "ai"
-    ]
+    ],
+    "id": "126"
   },
   {
     "title": "Senior Sharepoint Developer",
@@ -2816,7 +2942,8 @@
       "javascript",
       "react",
       "java"
-    ]
+    ],
+    "id": "127"
   },
   {
     "title": "Full stack developer [PHP - Laravel]",
@@ -2837,7 +2964,8 @@
       "php",
       "python",
       "ai"
-    ]
+    ],
+    "id": "128"
   },
   {
     "title": "Sr Software Engineer",
@@ -2854,7 +2982,8 @@
     "detailed_requirements": "Job DetailsExperience Needed:3 to 5 yearsCareer Level:Experienced (Non-Manager)Education Level:Not SpecifiedSalary:ConfidentialJob Categories:Engineering - Construction/Civil/ArchitectureEngineering - Telecom/TechnologyEngineering - OtherSkills And Tools:Computer ScienceEngineeringSoftware EngineeringSoftware DevelopmentSoftwareProgrammingInformation Technology (IT)",
     "additional_skills": [
       "ai"
-    ]
+    ],
+    "id": "129"
   },
   {
     "title": "Head of Software Development",
@@ -2881,7 +3010,8 @@
       "sql",
       "mysql",
       "java"
-    ]
+    ],
+    "id": "130"
   },
   {
     "title": "Frontend Engineer",
@@ -2906,7 +3036,8 @@
       "javascript",
       "react",
       "java"
-    ]
+    ],
+    "id": "131"
   },
   {
     "title": "Senior PHP Laravel Developer - Saudi Arabaia - Remotely",
@@ -2925,7 +3056,8 @@
     "additional_skills": [
       "php",
       "ai"
-    ]
+    ],
+    "id": "132"
   },
   {
     "title": "Senior ERP Developer",
@@ -2956,7 +3088,8 @@
       "css",
       "python",
       "java"
-    ]
+    ],
+    "id": "133"
   },
   {
     "title": "Product Owner",
@@ -2977,7 +3110,8 @@
       "agile",
       "jira",
       "ai"
-    ]
+    ],
+    "id": "134"
   },
   {
     "title": "iOS Developer",
@@ -3000,7 +3134,8 @@
       "git",
       "agile",
       "ai"
-    ]
+    ],
+    "id": "135"
   },
   {
     "title": "Flutter Web Developer",
@@ -3021,7 +3156,8 @@
       "mysql",
       "sql",
       "ai"
-    ]
+    ],
+    "id": "136"
   },
   {
     "title": "Project Coordinator",
@@ -3044,7 +3180,8 @@
       "agile",
       "scrum",
       "ai"
-    ]
+    ],
+    "id": "137"
   },
   {
     "title": "Senior Salesforce Developer",
@@ -3063,7 +3200,8 @@
     "additional_skills": [
       "ai",
       "aws"
-    ]
+    ],
+    "id": "138"
   },
   {
     "title": "Senior Software Quality Control Engineer",
@@ -3080,7 +3218,8 @@
     "detailed_requirements": "Job DetailsExperience Needed:5 to 7 yearsCareer Level:Experienced (Non-Manager)Education Level:Not SpecifiedSalary:ConfidentialJob Categories:IT/Software DevelopmentQualityEngineering - Telecom/TechnologySkills And Tools:Computer ScienceQuality ControlAnalytical SkillsControlEngineeringSoftware Testing",
     "additional_skills": [
       "ai"
-    ]
+    ],
+    "id": "139"
   },
   {
     "title": "Technical Project Manager",
@@ -3093,7 +3232,8 @@
     "experience_required": "Not specified",
     "education_required": "Not specified",
     "detailed_requirements": "",
-    "additional_skills": []
+    "additional_skills": [],
+    "id": "140"
   },
   {
     "title": "construction engineer -Real estates & facility Dept (outsource)",
@@ -3106,7 +3246,8 @@
     "experience_required": "Not specified",
     "education_required": "Not specified",
     "detailed_requirements": "",
-    "additional_skills": []
+    "additional_skills": [],
+    "id": "141"
   },
   {
     "title": "Full Stack Developer",
@@ -3119,7 +3260,8 @@
     "experience_required": "Not specified",
     "education_required": "Not specified",
     "detailed_requirements": "",
-    "additional_skills": []
+    "additional_skills": [],
+    "id": "142"
   },
   {
     "title": "Senior .NET Developer",
@@ -3132,7 +3274,8 @@
     "experience_required": "Not specified",
     "education_required": "Not specified",
     "detailed_requirements": "",
-    "additional_skills": []
+    "additional_skills": [],
+    "id": "143"
   },
   {
     "title": "Sales Software Account Manager",
@@ -3145,7 +3288,8 @@
     "experience_required": "Not specified",
     "education_required": "Not specified",
     "detailed_requirements": "",
-    "additional_skills": []
+    "additional_skills": [],
+    "id": "144"
   },
   {
     "title": "Software Business Analyst",
@@ -3158,7 +3302,8 @@
     "experience_required": "Not specified",
     "education_required": "Not specified",
     "detailed_requirements": "",
-    "additional_skills": []
+    "additional_skills": [],
+    "id": "145"
   },
   {
     "title": "Software Developer",
@@ -3171,7 +3316,8 @@
     "experience_required": "Not specified",
     "education_required": "Not specified",
     "detailed_requirements": "",
-    "additional_skills": []
+    "additional_skills": [],
+    "id": "146"
   },
   {
     "title": "Software Project Manager",
@@ -3184,7 +3330,8 @@
     "experience_required": "Not specified",
     "education_required": "Not specified",
     "detailed_requirements": "",
-    "additional_skills": []
+    "additional_skills": [],
+    "id": "147"
   },
   {
     "title": "Software Tester / QA Engineer",
@@ -3197,6 +3344,7 @@
     "experience_required": "Not specified",
     "education_required": "Not specified",
     "detailed_requirements": "",
-    "additional_skills": []
+    "additional_skills": [],
+    "id": "148"
   }
 ]

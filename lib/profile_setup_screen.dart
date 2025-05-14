@@ -14,10 +14,47 @@ class ProfileSetupScreen extends StatefulWidget {
 class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
-  final _universityController = TextEditingController();
+  String? _selectedUniversity;
   DateTime? _selectedDate;
   bool _isLoading = false;
   String? _error;
+
+  final List<String> _egyptianUniversities = [
+    'Ain Shams University',
+    'Alexandria University',
+    'Al-Azhar University',
+    'Assiut University',
+    'Aswan University',
+    'Banha University',
+    'Beni Suef University',
+    'Cairo University',
+    'Damanhour University',
+    'Damietta University',
+    'Fayoum University',
+    'Helwan University',
+    'Kafr El Sheikh University',
+    'Mansoura University',
+    'Menoufia University',
+    'Minia University',
+    'Port Said University',
+    'Sohag University',
+    'South Valley University',
+    'Suez Canal University',
+    'Suez University',
+    'Tanta University',
+    'Zagazig University',
+    'The American University in Cairo',
+    'The British University in Egypt',
+    'German University in Cairo',
+    'Misr International University',
+    'October 6 University',
+    'Future University in Egypt',
+    'Nile University',
+    'Pharos University in Alexandria',
+    'Sinai University',
+    'Universities of Canada in Egypt',
+    'Other',
+  ];
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -49,7 +86,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
         // Save profile data to Firestore
         await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
           'username': _usernameController.text.trim(),
-          'university': _universityController.text.trim(),
+          'university': _selectedUniversity,
           'dateOfBirth': Timestamp.fromDate(_selectedDate!),
           'isProfileComplete': true,
           'updatedAt': Timestamp.now(),
@@ -80,7 +117,6 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   @override
   void dispose() {
     _usernameController.dispose();
-    _universityController.dispose();
     super.dispose();
   }
 
@@ -145,18 +181,31 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                           },
                         ),
                         const SizedBox(height: 16),
-                        TextFormField(
-                          controller: _universityController,
+                        DropdownButtonFormField<String>(
+                          value: _selectedUniversity,
+                          hint: const Text('Select your university'),
+                          isExpanded: true,
                           decoration: const InputDecoration(
                             labelText: 'University',
                             border: OutlineInputBorder(),
                             prefixIcon: Icon(Icons.school),
                           ),
+                          items: _egyptianUniversities.map((String uni) {
+                            return DropdownMenuItem<String>(
+                              value: uni,
+                              child: Text(uni),
+                            );
+                          }).toList(),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter your university';
+                              return 'Please select your university';
                             }
                             return null;
+                          },
+                          onChanged: (value) {
+                            setState(() {
+                              _selectedUniversity = value;
+                            });
                           },
                         ),
                         const SizedBox(height: 16),

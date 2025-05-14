@@ -4,6 +4,7 @@ class SavedJob extends Internship {
   final DateTime savedDate;
 
   SavedJob({
+    required super.id,
     required super.title,
     required super.company,
     required super.location,
@@ -22,6 +23,7 @@ class SavedJob extends Internship {
 
   factory SavedJob.fromInternship(Internship internship) {
     return SavedJob(
+      id: internship.id,
       title: internship.title,
       company: internship.company,
       location: internship.location,
@@ -41,6 +43,7 @@ class SavedJob extends Internship {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'title': title,
       'company': company,
       'location': location,
@@ -60,20 +63,21 @@ class SavedJob extends Internship {
 
   factory SavedJob.fromJson(Map<String, dynamic> json) {
     return SavedJob(
-      title: json['title'],
-      company: json['company'],
-      location: json['location'],
-      jobType: json['jobType'],
-      postedDate: json['postedDate'],
-      url: json['url'],
-      skills: List<String>.from(json['skills']),
-      experienceRequired: json['experienceRequired'],
-      educationRequired: json['educationRequired'],
-      detailedRequirements: json['detailedRequirements'],
-      additionalSkills: List<String>.from(json['additionalSkills']),
-      isPaid: json['isPaid'],
-      isRemote: json['isRemote'],
-      savedDate: DateTime.parse(json['savedDate']),
+      id: json['id'] ?? '',
+      title: json['title'] ?? '',
+      company: json['company'] ?? '',
+      location: json['location'] ?? '',
+      jobType: json['jobType'] ?? '',
+      postedDate: json['postedDate'] ?? '',
+      url: json['url'] ?? '',
+      skills: List<String>.from(json['skills'] ?? []),
+      experienceRequired: json['experienceRequired'] ?? '',
+      educationRequired: json['educationRequired'] ?? '',
+      detailedRequirements: json['detailedRequirements'] ?? '',
+      additionalSkills: List<String>.from(json['additionalSkills'] ?? []),
+      isPaid: json['isPaid'] ?? false,
+      isRemote: json['isRemote'] ?? false,
+      savedDate: DateTime.parse(json['savedDate'] ?? DateTime.now().toIso8601String()),
     );
   }
 } 

@@ -1,4 +1,5 @@
 class Internship {
+  final String id;
   final String title;
   final String company;
   final String location;
@@ -14,6 +15,7 @@ class Internship {
   final bool isRemote;
 
   Internship({
+    required this.id,
     required this.title,
     required this.company,
     required this.location,
@@ -61,6 +63,7 @@ class Internship {
     }
 
     return Internship(
+      id: json['id'] ?? '',
       title: json['title'] ?? '',
       company: json['company'] ?? '',
       location: locationStr,

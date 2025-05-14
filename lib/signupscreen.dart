@@ -17,7 +17,6 @@ class _AuthScreenState extends State<AuthScreen> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  final _universityController = TextEditingController();
   DateTime? _dateOfBirth;
   int? _graduationYear;
   final List<int> _graduationYears = List.generate(
@@ -43,13 +42,50 @@ class _AuthScreenState extends State<AuthScreen> {
   // Use 'http://10.0.2.2:3000' for Android emulator
   // Use 'http://127.0.0.1:3000' for iOS simulator
 
+  final List<String> _egyptianUniversities = [
+    'Ain Shams University',
+    'Alexandria University',
+    'Al-Azhar University',
+    'Assiut University',
+    'Aswan University',
+    'Banha University',
+    'Beni Suef University',
+    'Cairo University',
+    'Damanhour University',
+    'Damietta University',
+    'Fayoum University',
+    'Helwan University',
+    'Kafr El Sheikh University',
+    'Mansoura University',
+    'Menoufia University',
+    'Minia University',
+    'Port Said University',
+    'Sohag University',
+    'South Valley University',
+    'Suez Canal University',
+    'Suez University',
+    'Tanta University',
+    'Zagazig University',
+    'The American University in Cairo',
+    'The British University in Egypt',
+    'German University in Cairo',
+    'Misr International University',
+    'October 6 University',
+    'Future University in Egypt',
+    'Nile University',
+    'Pharos University in Alexandria',
+    'Sinai University',
+    'Universities of Canada in Egypt',
+    'Other',
+  ];
+  String? _selectedUniversity;
+
   @override
   void dispose() {
     _emailController.dispose();
     _usernameController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
-    _universityController.dispose();
     super.dispose();
   }
 
@@ -94,7 +130,7 @@ class _AuthScreenState extends State<AuthScreen> {
         'email': _emailController.text.trim(),
         'password': _passwordController.text,
         'dob': _dateOfBirth?.toIso8601String(),
-        'university': _universityController.text.trim(),
+        'university': _selectedUniversity,
         'graduationYear': _graduationYear,
       }
           : {
@@ -214,10 +250,9 @@ class _AuthScreenState extends State<AuthScreen> {
       }
 
       // Validate university
-      final university = _universityController.text.trim();
-      if (university.isEmpty) {
+      if (_selectedUniversity == null) {
         setState(() {
-          _universityError = 'Please enter your university';
+          _universityError = 'Please select your university';
         });
         isValid = false;
       }
@@ -354,11 +389,43 @@ class _AuthScreenState extends State<AuthScreen> {
                             _buildHelpText('You must be at least 16 years old'),
                             const SizedBox(height: 20),
                             _buildFieldLabel('University'),
-                            _buildTextField(
-                              controller: _universityController,
-                              hintText: 'Your university name',
-                              errorText: _universityError,
+                            DropdownButtonFormField<String>(
+                              value: _selectedUniversity,
+                              hint: const Text('Select your university'),
+                              isExpanded: true,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(color: Colors.purple),
+                                ),
+                                prefixIcon: const Icon(Icons.school),
+                                labelText: 'University',
+                                errorText: _universityError,
+                                filled: true,
+                                fillColor: Colors.white,
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                              ),
+                              items: _egyptianUniversities.map((String uni) {
+                                return DropdownMenuItem<String>(
+                                  value: uni,
+                                  child: Text(uni),
+                                );
+                              }).toList(),
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedUniversity = value;
+                                  _universityError = null;
+                                });
+                              },
                             ),
+                            if (_universityError != null)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 6, left: 16),
+                                child: Text(
+                                  _universityError!,
+                                  style: const TextStyle(color: Colors.red, fontSize: 12),
+                                ),
+                              ),
                             const SizedBox(height: 20),
                             _buildFieldLabel('Graduation Year'),
                             Container(
@@ -454,9 +521,9 @@ class _AuthScreenState extends State<AuthScreen> {
                                       _usernameController.clear();
                                       _passwordController.clear();
                                       _confirmPasswordController.clear();
-                                      _universityController.clear();
                                       _dateOfBirth = null;
                                       _graduationYear = null;
+                                      _selectedUniversity = null;
                                     });
                                   },
                                   child: Text(

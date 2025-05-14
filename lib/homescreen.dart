@@ -35,16 +35,17 @@ class _HomeScreenState extends State<HomeScreen>
   List<Internship> _recommendedInternships = []; // Store resulting internships
   final TextEditingController _urlController = TextEditingController();
   String _fileName = ''; // Store the name of the uploaded file
+  List<String> _favoriteIds = [];
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-    _tabController
-        .addListener(_handleTabSelection); // Add listener for tab changes
-    _loadInternships(); // Load internships from JSON file
-    _checkResumeStatus(); // Check if a resume has been uploaded
-    _loadUserSkills(); // Add this line to load user skills
+    _tabController = TabController(length: 4, vsync: this);
+    _tabController.addListener(_handleTabSelection);
+    _loadInternships();
+    _checkResumeStatus();
+    _loadUserSkills();
+    _loadFavorites();
   }
 
   Future<void> _loadUserSkills() async {
@@ -67,6 +68,64 @@ class _HomeScreenState extends State<HomeScreen>
       }
     } catch (e) {
       print('Error loading user skills: $e');
+    }
+  }
+
+  Future<void> _loadFavorites() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+      
+      final data = doc.data();
+      if (data != null && data['favorites'] != null) {
+        setState(() {
+          _favoriteIds = List<String>.from(data['favorites']);
+        });
+      } else {
+        // Initialize empty favorites list if none exists
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .set({'favorites': []}, SetOptions(merge: true));
+        setState(() {
+          _favoriteIds = [];
+        });
+      }
+    } catch (e) {
+      print('Error loading favorites: $e');
+      setState(() {
+        _favoriteIds = [];
+      });
+    }
+  }
+
+  Future<void> _toggleFavorite(String internshipId) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    try {
+      final userRef = FirebaseFirestore.instance.collection('users').doc(user.uid);
+      final doc = await userRef.get();
+      final data = doc.data() ?? {};
+      final favorites = List<String>.from(data['favorites'] ?? []);
+
+      setState(() {
+        if (favorites.contains(internshipId)) {
+          favorites.remove(internshipId);
+        } else {
+          favorites.add(internshipId);
+        }
+        _favoriteIds = favorites;
+      });
+
+      await userRef.update({'favorites': favorites});
+    } catch (e) {
+      print('Error toggling favorite: $e');
     }
   }
 
@@ -464,11 +523,11 @@ class _HomeScreenState extends State<HomeScreen>
             Tab(text: 'Recommended'),
             Tab(text: 'Recent'),
             Tab(text: 'All'),
+            Tab(text: 'Favorites'),
           ],
         ),
         actions: [
-          if (_tabController.index ==
-              0) // Show refresh icon only on Recommended tab
+          if (_tabController.index == 0) // Show refresh icon only on Recommended tab
             IconButton(
               icon: const Icon(Icons.refresh),
               onPressed: _refreshRecommendations,
@@ -501,10 +560,10 @@ class _HomeScreenState extends State<HomeScreen>
         child: TabBarView(
           controller: _tabController,
           children: [
-            _buildRecommendedTab(), // Replace this with the merged tab
-            _buildInternshipList(_getRecentlyAddedInternships()), // Recent tab
-            _buildInternshipList(_allInternships), // All tab
-           
+            _buildRecommendedTab(),
+            _buildInternshipList(_getRecentlyAddedInternships()),
+            _buildInternshipList(_allInternships),
+            _buildFavoritesTab(),
           ],
         ),
       ),
@@ -586,6 +645,7 @@ class _HomeScreenState extends State<HomeScreen>
       itemCount: internships.length,
       itemBuilder: (context, index) {
         final internship = internships[index];
+        final isFavorite = _favoriteIds.contains(internship.id);
         return Card(
           elevation: 1,
           margin: const EdgeInsets.only(bottom: 12),
@@ -598,12 +658,26 @@ class _HomeScreenState extends State<HomeScreen>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    internship.title,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          internship.title,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(
+                          isFavorite ? Icons.favorite : Icons.favorite_border,
+                          color: isFavorite ? Colors.red : Colors.grey,
+                        ),
+                        onPressed: () => _toggleFavorite(internship.id),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -616,8 +690,7 @@ class _HomeScreenState extends State<HomeScreen>
                   const SizedBox(height: 12),
                   Row(
                     children: [
-                      Icon(Icons.location_on,
-                          size: 14, color: Colors.grey[600]),
+                      Icon(Icons.location_on, size: 14, color: Colors.grey[600]),
                       const SizedBox(width: 4),
                       Text(
                         internship.location,
@@ -638,8 +711,7 @@ class _HomeScreenState extends State<HomeScreen>
                       ),
                       ...[
                         const SizedBox(width: 16),
-                        Icon(Icons.access_time,
-                            size: 14, color: Colors.grey[600]),
+                        Icon(Icons.access_time, size: 14, color: Colors.grey[600]),
                         const SizedBox(width: 4),
                         Text(
                           internship.postedDate,
@@ -735,6 +807,70 @@ class _HomeScreenState extends State<HomeScreen>
                 ],
               ),
             ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildFavoritesTab() {
+    if (_favoriteIds.isEmpty) {
+      return const Center(
+        child: Text('No favorites yet'),
+      );
+    }
+
+    final favoriteInternships = _allInternships
+        .where((internship) => _favoriteIds.contains(internship.id))
+        .toList();
+
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: favoriteInternships.length,
+      itemBuilder: (context, index) {
+        final internship = favoriteInternships[index];
+        return Card(
+          margin: const EdgeInsets.only(bottom: 16),
+          child: ListTile(
+            title: Text(internship.title),
+            subtitle: Text(internship.company),
+            trailing: IconButton(
+              icon: const Icon(Icons.favorite, color: Colors.red),
+              onPressed: () => _toggleFavorite(internship.id),
+            ),
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text(internship.title),
+                  content: const Text('What would you like to do?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () async {
+                        Navigator.of(context).pop();
+                        final url = Uri.parse(internship.url);
+                        if (await canLaunchUrl(url)) {
+                          await launchUrl(url);
+                        }
+                      },
+                      child: const Text('Apply'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AceOfferPage(internship: internship),
+                          ),
+                        );
+                      },
+                      child: const Text('Ace it'),
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
         );
       },
