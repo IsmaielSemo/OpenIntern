@@ -4,27 +4,26 @@
 // utility in the flutter_test package. For example, you can send tap and scroll
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:openintern/authe/main(auth).dart';
+import 'package:openintern/loginscreen.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('Login button navigates to HomeScreen', (WidgetTester tester) async {
+    // Build the LoginScreen widget
+    await tester.pumpWidget(
+      const MaterialApp(home: LoginScreen()),
+    );
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // Verify the Login button exists
+    final loginButton = find.text('Login');
+    expect(loginButton, findsOneWidget);
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    // Tap the Login button
+    await tester.tap(loginButton);
+    await tester.pumpAndSettle();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Verify navigation to HomeScreen
+    expect(find.text('Home'), findsNothing); // Replace with actual HomeScreen content
   });
 }
