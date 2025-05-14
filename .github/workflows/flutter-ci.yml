@@ -37,8 +37,8 @@ jobs:
       run: flutter build apk --release
 
     # Step 6: Archive build artifacts (optional)
-    - name: Upload APK
-      uses: actions/upload-artifact@v3.1.0
-      with:
-        name: app-release.apk
-        path: build/app/outputs/flutter-apk/app-release.apk
+    # - name: Upload APK
+    #   uses: actions/upload-artifact@v3.1.0
+    #   with:
+    #     name: app-release.apk
+    #     path: build/app/outputs/flutter-apk/app-release.apk
