@@ -1,7 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'welcome_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'homescreen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: const FirebaseOptions(
+      apiKey: "AIzaSyA0scpMOa2y0XHYLMcY7HGQZCMmrOF1eSw",
+      authDomain: "openintern-22f00.firebaseapp.com",
+      projectId: "openintern-22f00",
+      storageBucket: "openintern-22f00.appspot.com",
+      messagingSenderId: "402111961084",
+      appId: "1:402111961084:web:d30332661f94dfbfd7c479",
+    ),
+  );
   runApp(const MyApp());
 }
 
@@ -18,7 +32,17 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.grey[200],
         useMaterial3: true,
       ),
-      home: const WelcomeScreen(),
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          // If the user is logged in and email is verified
+          if (snapshot.hasData && snapshot.data!.emailVerified) {
+            return const HomeScreen();
+          }
+          // Otherwise show the welcome screen
+          return const WelcomeScreen();
+        },
+      ),
     );
   }
 }
@@ -29,6 +53,18 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('OpenIntern'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              // No need to navigate - StreamBuilder will handle it
+            },
+          ),
+        ],
+      ),
       body: Stack(
         children: [
           Positioned(
@@ -62,29 +98,21 @@ class HomeScreen extends StatelessWidget {
                       color: Colors.grey,
                     ),
                   ),
-                  const SizedBox(height: 60),
-                  SizedBox(
-                    width: 200,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+                  const SizedBox(height: 20),
+                  FutureBuilder<User?>(
+                    future: Future.value(FirebaseAuth.instance.currentUser),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return Text(
+                          'Welcome, ${snapshot.data!.email}',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF4285F4),
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                      ),
-                      child: const Text(
-                        'Login',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ),
+                      }
+                      return const SizedBox();
+                    },
                   ),
                 ],
               ),

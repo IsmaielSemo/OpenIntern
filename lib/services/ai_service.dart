@@ -9,19 +9,26 @@ class AIService {
     required String company,
     required List<String> requiredSkills,
     required String detailedRequirements,
+    String? userName,
+    List<String>? userSkills,
+    List<String>? userProjects,
     String mode = 'cover_letter',
   }) async {
     try {
+      final body = {
+        'jobTitle': jobTitle,
+        'company': company,
+        'requiredSkills': requiredSkills,
+        'detailedRequirements': detailedRequirements,
+        'mode': mode,
+      };
+      if (userName != null) body['userName'] = userName;
+      if (userSkills != null) body['userSkills'] = userSkills;
+      if (userProjects != null) body['userProjects'] = userProjects;
       final response = await http.post(
         Uri.parse(_backendUrl),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'jobTitle': jobTitle,
-          'company': company,
-          'requiredSkills': requiredSkills,
-          'detailedRequirements': detailedRequirements,
-          'mode': mode,
-        }),
+        body: jsonEncode(body),
       );
 
       if (response.statusCode == 200) {

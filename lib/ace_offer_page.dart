@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'models/internship.dart';
 import 'services/ai_service.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AceOfferPage extends StatefulWidget {
   final Internship internship;
@@ -18,6 +20,18 @@ class _AceOfferPageState extends State<AceOfferPage> {
   List<String>? _questions;
   String? _error;
 
+  Future<Map<String, dynamic>> _fetchUserData() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return {};
+    final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+    final data = doc.data() ?? {};
+    return {
+      'name': data['fullName'] ?? '',
+      'skills': List<String>.from(data['skills'] ?? []),
+      'projects': List<String>.from(data['projects'] ?? []),
+    };
+  }
+
   void _fetchCoverLetter() async {
     setState(() {
       _loading = true;
@@ -27,11 +41,17 @@ class _AceOfferPageState extends State<AceOfferPage> {
       _error = null;
     });
     try {
+      final userData = await _fetchUserData();
+      final matchingSkills = (userData['skills'] as List<String>).where((s) => widget.internship.skills.contains(s)).toList();
+      final matchingProjects = (userData['projects'] as List<String>).where((p) => widget.internship.skills.any((s) => p.toLowerCase().contains(s.toLowerCase()))).toList();
       final result = await AIService.generateCoverLetterAndCourses(
         jobTitle: widget.internship.title,
         company: widget.internship.company,
         requiredSkills: widget.internship.skills,
         detailedRequirements: widget.internship.detailedRequirements,
+        userName: userData['name'],
+        userSkills: matchingSkills,
+        userProjects: matchingProjects,
         mode: 'cover_letter',
       );
       setState(() {

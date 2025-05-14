@@ -12,6 +12,9 @@ import 'editprofilescreen.dart';
 import 'ResumeParserPage.dart';
 import 'services/ai_service.dart';
 import 'ace_offer_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'welcome_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -41,11 +44,36 @@ class _HomeScreenState extends State<HomeScreen>
         .addListener(_handleTabSelection); // Add listener for tab changes
     _loadInternships(); // Load internships from JSON file
     _checkResumeStatus(); // Check if a resume has been uploaded
+    _loadUserSkills(); // Add this line to load user skills
+  }
+
+  Future<void> _loadUserSkills() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) return;
+
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+
+      if (userDoc.exists && userDoc.data()?['skills'] != null) {
+        final skills = List<String>.from(userDoc.data()!['skills']);
+        setState(() {
+          _parsedSkills = skills;
+          _hasUploadedResume = true;
+        });
+        _refreshRecommendations();
+      }
+    } catch (e) {
+      print('Error loading user skills: $e');
+    }
   }
 
   void _onResumeUploaded(List<String> skills) {
     setState(() {
       _parsedSkills = skills;
+      _hasUploadedResume = true;
       _recommendedInternships = _allInternships.where((internship) {
         final internshipSkills =
             internship.skills.map((skill) => skill.toLowerCase()).toList();
@@ -175,17 +203,28 @@ class _HomeScreenState extends State<HomeScreen>
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              TextField(
-                controller: _urlController,
-                decoration: const InputDecoration(
-                  labelText: 'Public Resume URL (PDF/DOCX)',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 8),
               ElevatedButton(
-                onPressed: _isLoading ? null : _pickFile,
-                child: Text(_isLoading ? 'Processing...' : 'Upload Resume'),
+                onPressed: () async {
+                  // Navigate to ResumeParserPage and update skills on return
+                  final user = FirebaseAuth.instance.currentUser;
+                  final uid = user?.uid;
+                  print('DEBUG: HomeScreen user UID: $uid');
+                  final skills = await Navigator.push<List<String>>(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ResumeParserPage(
+                        userUid: uid,
+                        onResumeUploaded: (skills) {
+                          Navigator.pop(context, skills);
+                        },
+                      ),
+                    ),
+                  );
+                  if (skills != null && skills.isNotEmpty) {
+                    _onResumeUploaded(skills);
+                  }
+                },
+                child: const Text('Parse or Upload Resume'),
               ),
               if (_fileName.isNotEmpty)
                 Padding(
@@ -410,6 +449,15 @@ class _HomeScreenState extends State<HomeScreen>
       appBar: AppBar(
         title: const Text('OpenIntern'),
         backgroundColor: const Color(0xFF4285F4),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+            );
+          },
+        ),
         bottom: TabBar(
           controller: _tabController,
           tabs: const [

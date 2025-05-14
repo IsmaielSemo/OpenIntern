@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'validators.dart';
 import 'deactivate_account_screen.dart';
 
@@ -41,6 +43,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     super.initState();
     // Set default graduation year to current year + 2
     _graduationYear = DateTime.now().year + 2;
+    _loadUserProfile();
+  }
+
+  Future<void> _loadUserProfile() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+    final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+    if (doc.exists) {
+      final data = doc.data()!;
+      setState(() {
+        _usernameController.text = data['username'] ?? '';
+        _universityController.text = data['university'] ?? '';
+        _graduationYear = data['graduationYear'] ?? _graduationYear;
+      });
+    }
   }
 
   @override
@@ -52,34 +69,38 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     super.dispose();
   }
 
-  void _updateProfile() {
+  void _updateProfile() async {
     if (!_validateForm()) return;
-
-    // Check if any changes were made
-    if (!_usernameModified && !_universityModified && !_graduationYearModified && !_isPasswordChangeRequested) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No changes were made')),
-      );
-      return;
-    }
-
     setState(() {
       _isLoading = true;
       _errorMessage = null;
     });
-
-    // Simulate loading
-    Future.delayed(const Duration(seconds: 1), () {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Profile updated successfully!')),
-        );
-        Navigator.pop(context);
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) throw Exception('No user is currently logged in');
+      final updates = <String, dynamic>{};
+      if (_usernameModified) updates['username'] = _usernameController.text.trim();
+      if (_universityModified) updates['university'] = _universityController.text.trim();
+      if (_graduationYearModified) updates['graduationYear'] = _graduationYear;
+      if (_isPasswordChangeRequested && _passwordController.text.isNotEmpty) {
+        await user.updatePassword(_passwordController.text.trim());
       }
-    });
+      if (updates.isNotEmpty) {
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).set(updates, SetOptions(merge: true));
+      }
+      setState(() {
+        _isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Profile updated successfully!')),
+      );
+      Navigator.pop(context);
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+        _errorMessage = e.toString();
+      });
+    }
   }
 
   bool _validateForm() {
@@ -188,6 +209,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 hintText: 'Enter username',
                 errorText: _usernameError,
                 isModified: _usernameModified,
+                onChanged: (value) {
+                  setState(() {
+                    _usernameModified = true;
+                  });
+                },
               ),
               const SizedBox(height: 20),
               _buildFieldLabel('University'),
@@ -196,6 +222,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 hintText: 'Enter university',
                 errorText: _universityError,
                 isModified: _universityModified,
+                onChanged: (value) {
+                  setState(() {
+                    _universityModified = true;
+                  });
+                },
               ),
               const SizedBox(height: 20),
               _buildFieldLabel('Graduation Year'),
@@ -388,11 +419,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     VoidCallback? toggleObscure,
     TextInputType keyboardType = TextInputType.text,
     bool isModified = false,
+    ValueChanged<String>? onChanged,
   }) {
     return TextFormField(
       controller: controller,
       obscureText: obscureText,
       keyboardType: keyboardType,
+      onChanged: onChanged,
       decoration: InputDecoration(
         hintText: hintText,
         errorText: errorText,

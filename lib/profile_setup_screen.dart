@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'homescreen.dart';
+import 'verification_screen.dart';
 
 class ProfileSetupScreen extends StatefulWidget {
   const ProfileSetupScreen({super.key});
@@ -13,6 +16,8 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   final _usernameController = TextEditingController();
   final _universityController = TextEditingController();
   DateTime? _selectedDate;
+  bool _isLoading = false;
+  String? _error;
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -28,13 +33,47 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     }
   }
 
-  void _submitProfile() {
+  Future<void> _submitProfile() async {
     if (_formKey.currentState!.validate() && _selectedDate != null) {
-      // TODO: Save profile data
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
-      );
+      setState(() {
+        _isLoading = true;
+        _error = null;
+      });
+
+      try {
+        final user = FirebaseAuth.instance.currentUser;
+        if (user == null) {
+          throw Exception('No user is currently logged in');
+        }
+
+        // Save profile data to Firestore
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+          'username': _usernameController.text.trim(),
+          'university': _universityController.text.trim(),
+          'dateOfBirth': Timestamp.fromDate(_selectedDate!),
+          'isProfileComplete': true,
+          'updatedAt': Timestamp.now(),
+        }, SetOptions(merge: true));
+
+        // Navigate to home screen
+        if (!mounted) return;
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const HomeScreen(),
+          ),
+        );
+      } catch (e) {
+        setState(() {
+          _error = e.toString();
+        });
+      } finally {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      }
     }
   }
 
@@ -48,6 +87,11 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Complete Your Profile'),
+        backgroundColor: const Color(0xFF4285F4),
+        foregroundColor: Colors.white,
+      ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -94,24 +138,11 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                             if (value == null || value.isEmpty) {
                               return 'Please enter a username';
                             }
+                            if (value.length < 3) {
+                              return 'Username must be at least 3 characters';
+                            }
                             return null;
                           },
-                        ),
-                        const SizedBox(height: 16),
-                        InkWell(
-                          onTap: () => _selectDate(context),
-                          child: InputDecorator(
-                            decoration: const InputDecoration(
-                              labelText: 'Date of Birth',
-                              border: OutlineInputBorder(),
-                              prefixIcon: Icon(Icons.calendar_today),
-                            ),
-                            child: Text(
-                              _selectedDate == null
-                                  ? 'Select Date'
-                                  : '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}',
-                            ),
-                          ),
                         ),
                         const SizedBox(height: 16),
                         TextFormField(
@@ -128,26 +159,63 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                             return null;
                           },
                         ),
+                        const SizedBox(height: 16),
+                        GestureDetector(
+                          onTap: () => _selectDate(context),
+                          child: AbsorbPointer(
+                            child: TextFormField(
+                              decoration: const InputDecoration(
+                                labelText: 'Date of Birth',
+                                border: OutlineInputBorder(),
+                                prefixIcon: Icon(Icons.calendar_today),
+                              ),
+                              controller: TextEditingController(
+                                text: _selectedDate != null
+                                    ? '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}'
+                                    : '',
+                              ),
+                              validator: (value) {
+                                if (_selectedDate == null) {
+                                  return 'Please select your date of birth';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                        ),
+                        if (_error != null) ...[
+                          const SizedBox(height: 16),
+                          Text(
+                            _error!,
+                            style: const TextStyle(
+                              color: Colors.red,
+                              fontSize: 14,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
                         const SizedBox(height: 24),
                         SizedBox(
                           width: double.infinity,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF4285F4),
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                            onPressed: _submitProfile,
-                            child: const Text(
-                              'Complete Setup',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
+                          child: _isLoading
+                              ? const Center(child: CircularProgressIndicator())
+                              : ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF4285F4),
+                                    padding: const EdgeInsets.symmetric(vertical: 16),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  onPressed: _submitProfile,
+                                  child: const Text(
+                                    'Complete Profile',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
                         ),
                       ],
                     ),

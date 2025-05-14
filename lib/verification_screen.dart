@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'profile_setup_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:async';
 import 'welcome_screen.dart';
+import 'homescreen.dart';
+import 'profile_setup_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class VerificationScreen extends StatefulWidget {
   final String email;
   final bool isDeactivation;
+
   const VerificationScreen({
     super.key,
     required this.email,
@@ -17,61 +21,54 @@ class VerificationScreen extends StatefulWidget {
 }
 
 class _VerificationScreenState extends State<VerificationScreen> {
-  final List<TextEditingController> _controllers = List.generate(6, (_) => TextEditingController());
-  final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
-  final _formKey = GlobalKey<FormState>();
-  bool _isVerifying = false;
-  bool _isVerified = false;
+  final auth = FirebaseAuth.instance;
+  late User user;
+  late Timer timer;
+  bool isEmailVerified = false;
+  String _error = '';
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    user = auth.currentUser!;
+    checkEmailVerification();
+  }
 
   @override
   void dispose() {
-    for (var controller in _controllers) {
-      controller.dispose();
-    }
-    for (var node in _focusNodes) {
-      node.dispose();
-    }
+    timer.cancel();
     super.dispose();
   }
 
-  void _onCodeChanged(String value, int index) {
-    if (value.length == 1) {
-      if (index < 5) {
-        _focusNodes[index + 1].requestFocus();
+  Future<void> checkEmailVerification() async {
+    // Start checking email verification status every 3 seconds
+    timer = Timer.periodic(
+      const Duration(seconds: 3),
+      (_) => _checkVerificationStatus(),
+    );
+  }
+
+  Future<void> _checkVerificationStatus() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        throw Exception('No user is currently logged in');
       }
-    }
-  }
 
-  String get _verificationCode {
-    return _controllers.map((c) => c.text).join();
-  }
-
-  Future<void> _verifyCode() async {
-    if (_verificationCode.length == 6) {
-      setState(() {
-        _isVerifying = true;
-      });
-
-      // Simulate verification delay
-      await Future.delayed(const Duration(seconds: 2));
-
-      setState(() {
-        _isVerified = true;
-      });
-
-      // Wait a moment to show the success state
-      await Future.delayed(const Duration(milliseconds: 500));
-
-      if (mounted) {
+      await user.reload();
+      if (user.emailVerified) {
+        if (!mounted) return;
         if (widget.isDeactivation) {
-          // For deactivation, go back to welcome screen
+          // Delete user from Firestore and Auth
+          await FirebaseFirestore.instance.collection('users').doc(user.uid).delete();
+          await user.delete();
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => const WelcomeScreen()),
             (route) => false,
           );
         } else {
-          // For email verification, go to profile setup
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -80,12 +77,42 @@ class _VerificationScreenState extends State<VerificationScreen> {
           );
         }
       }
+    } catch (e) {
+      setState(() {
+        _error = e.toString();
+      });
+    }
+  }
+
+  Future<void> _resendVerificationEmail() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) throw Exception('No user is currently logged in');
+      await user.reload();
+      if (user.emailVerified) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Your email is already verified.')),
+        );
+        return;
+      }
+      await user.sendEmailVerification();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Verification email resent!')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: ${e.toString()}')),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.isDeactivation ? 'Verify Deactivation' : 'Email Verification'),
+        automaticallyImplyLeading: false,
+      ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -97,134 +124,110 @@ class _VerificationScreenState extends State<VerificationScreen> {
             ],
           ),
         ),
-        child: SafeArea(
-          child: Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24.0),
-              child: Card(
-                elevation: 8,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          widget.isDeactivation
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Card(
+              elevation: 8,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      widget.isDeactivation ? Icons.warning_amber_rounded : Icons.email_outlined,
+                      size: 80,
+                      color: widget.isDeactivation ? Colors.red : const Color(0xFF4285F4),
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      isEmailVerified
+                          ? widget.isDeactivation
+                              ? 'Account Deactivated'
+                              : 'Email Verified!'
+                          : widget.isDeactivation
                               ? 'Verify Deactivation'
-                              : 'Verify Your Email',
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
+                              : 'Verify your email',
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      isEmailVerified
+                          ? widget.isDeactivation
+                              ? 'Your account has been successfully deactivated.'
+                              : 'Your email has been successfully verified. You can now login to your account.'
+                          : widget.isDeactivation
+                              ? 'We\'ve sent a verification link to ${widget.email}. Please check your inbox and click the link to verify your identity and deactivate your account.'
+                              : 'We\'ve sent a verification link to ${widget.email}. Please check your inbox and click the link to verify your email address.',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    if (isEmailVerified)
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF4285F4),
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          onPressed: () {
+                            if (widget.isDeactivation) {
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+                                (route) => false,
+                              );
+                            } else {
+                              Navigator.of(context).pop();
+                            }
+                          },
+                          child: Text(
+                            widget.isDeactivation ? 'Return to Welcome' : 'Continue to Login',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                        const SizedBox(height: 16),
-                        Text(
-                          widget.isDeactivation
-                              ? 'Please enter the verification code to confirm account deactivation'
-                              : 'We\'ve sent a verification code to ${widget.email}',
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: List.generate(6, (index) {
-                            return SizedBox(
-                              width: 45,
-                              child: TextField(
-                                controller: _controllers[index],
-                                focusNode: _focusNodes[index],
-                                textAlign: TextAlign.center,
-                                keyboardType: TextInputType.number,
-                                maxLength: 1,
-                                enabled: !_isVerifying,
-                                style: const TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                decoration: InputDecoration(
-                                  counterText: '',
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  filled: true,
-                                  fillColor: Colors.grey[100],
-                                ),
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.digitsOnly,
-                                ],
-                                onChanged: (value) => _onCodeChanged(value, index),
-                              ),
-                            );
-                          }),
-                        ),
-                        const SizedBox(height: 24),
-                        if (_isVerified)
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                widget.isDeactivation
-                                    ? Icons.check_circle
-                                    : Icons.check_circle,
-                                color: widget.isDeactivation ? Colors.red : Colors.green,
-                                size: 24,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                widget.isDeactivation
-                                    ? 'Account Deactivated'
-                                    : 'Verified!',
-                                style: TextStyle(
-                                  color: widget.isDeactivation ? Colors.red : Colors.green,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          )
-                        else
-                          SizedBox(
-                            width: double.infinity,
+                      )
+                    else
+                      Row(
+                        children: [
+                          Expanded(
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: widget.isDeactivation
-                                    ? Colors.red
-                                    : const Color(0xFF4285F4),
+                                backgroundColor: const Color(0xFF4285F4),
                                 padding: const EdgeInsets.symmetric(vertical: 16),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                               ),
-                              onPressed: _isVerifying ? null : _verifyCode,
-                              child: _isVerifying
-                                  ? const SizedBox(
-                                      height: 20,
-                                      width: 20,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                      ),
-                                    )
-                                  : Text(
-                                      widget.isDeactivation ? 'Deactivate' : 'Verify',
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
+                              onPressed: _isLoading ? null : _resendVerificationEmail,
+                              child: const Text(
+                                'Resend Email',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
                           ),
-                      ],
-                    ),
-                  ),
+                        ],
+                      ),
+                  ],
                 ),
               ),
             ),
@@ -233,4 +236,4 @@ class _VerificationScreenState extends State<VerificationScreen> {
       ),
     );
   }
-} 
+}

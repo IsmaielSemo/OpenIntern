@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'verification_screen.dart';
 import 'welcome_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DeactivateAccountScreen extends StatelessWidget {
   const DeactivateAccountScreen({super.key});
 
   void _showConfirmationDialog(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No user is currently logged in')),
+      );
+      return;
+    }
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -20,17 +30,19 @@ class DeactivateAccountScreen extends StatelessWidget {
               child: const Text('Cancel'),
             ),
             TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const VerificationScreen(
-                      email: 'user@example.com', // This would be the actual user's email
-                      isDeactivation: true,
-                    ),
-                  ),
+              onPressed: () async {
+                Navigator.of(context, rootNavigator: true).pop();
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+                  (route) => false,
                 );
+                final user = FirebaseAuth.instance.currentUser;
+                if (user != null) {
+                  try {
+                    await FirebaseFirestore.instance.collection('users').doc(user.uid).delete();
+                    await user.delete();
+                  } catch (_) {}
+                }
               },
               style: TextButton.styleFrom(
                 foregroundColor: Colors.red,

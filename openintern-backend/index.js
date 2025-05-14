@@ -7,22 +7,27 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const OPENROUTER_API_KEY = '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';
+const OPENROUTER_API_KEY = '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';
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
 // Helper to build the prompt
-function buildPrompt({ jobTitle, company, requiredSkills, detailedRequirements, mode }) {
+function buildPrompt({ jobTitle, company, requiredSkills, detailedRequirements, userName, userSkills, userProjects, mode }) {
   const baseInfo = `
 Job Title: ${jobTitle}
 Company: ${company}
 Required Skills: ${requiredSkills.join(', ')}
 Detailed Requirements: ${detailedRequirements}
 `;
+  const userInfo = (userName || userSkills || userProjects) ? `
+Applicant Name: ${userName || ''}
+Applicant Skills: ${(userSkills && userSkills.length) ? userSkills.join(', ') : ''}
+Applicant Projects: ${(userProjects && userProjects.length) ? userProjects.join('; ') : ''}
+` : '';
 
   if (mode === 'cover_letter') {
     return `
-${baseInfo}
-
+${baseInfo}${userInfo}
+Write a personalized cover letter for this applicant and position, highlighting the applicant's relevant skills and projects.
 You MUST return only valid JSON. DO NOT include any text, labels, or markdown formatting. Just return raw JSON, starting and ending with curly braces {}.
 
 Format:
@@ -69,8 +74,7 @@ Format:
 
   // Default to cover letter if mode is unrecognized
   return `
-${baseInfo}
-
+${baseInfo}${userInfo}
 You MUST return only valid JSON. DO NOT include any text, labels, or markdown formatting. Just return raw JSON, starting and ending with curly braces {}.
 
 Format:
@@ -100,8 +104,8 @@ function extractJson(text) {
 app.post('/generate', async (req, res) => {
   console.log('Received /generate request:', req.body);
   try {
-    const { jobTitle, company, requiredSkills, detailedRequirements, mode } = req.body;
-    const prompt = buildPrompt({ jobTitle, company, requiredSkills, detailedRequirements, mode });
+    const { jobTitle, company, requiredSkills, detailedRequirements, userName, userSkills, userProjects, mode } = req.body;
+    const prompt = buildPrompt({ jobTitle, company, requiredSkills, detailedRequirements, userName, userSkills, userProjects, mode });
 
     console.log('Prompt:', prompt);
 

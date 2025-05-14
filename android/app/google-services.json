@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "402111961084",
+    "project_id": "openintern-22f00",
+    "storage_bucket": "openintern-22f00.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:402111961084:android:d30332661f94dfbfd7c479",
+        "android_client_info": {
+          "package_name": "com.example.untitled"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0scpMOa2y0XHYLMcY7HGQZCMmrOF1eSw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -6,11 +6,14 @@ import 'package:flutter/foundation.dart'; // for kIsWeb
 import 'dart:convert';
 import 'package:flutter/services.dart'; // for running shell commands
 import 'dart:typed_data';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ResumeParserPage extends StatefulWidget {
+  final String? userUid;
   final Function(List<String>) onResumeUploaded;
 
-  const ResumeParserPage({Key? key, required this.onResumeUploaded})
+  const ResumeParserPage({Key? key, required this.userUid, required this.onResumeUploaded})
       : super(key: key);
 
   @override
@@ -25,7 +28,31 @@ class _ResumeParserPageState extends State<ResumeParserPage> {
   String? _error;
   final TextEditingController _urlController = TextEditingController();
 
+  Future<void> _saveSkillsToFirestore(List<String> skills) async {
+    try {
+      print('DEBUG: ResumeParserPage received userUid: \\${widget.userUid}');
+      if (widget.userUid == null) {
+        setState(() {
+          _error = 'No user is currently logged in';
+        });
+        return;
+      }
+      await FirebaseFirestore.instance.collection('users').doc(widget.userUid).set({
+        'skills': skills,
+        'resumeUploaded': true,
+        'resumeUploadDate': Timestamp.now(),
+      }, SetOptions(merge: true));
+    } catch (e) {
+      setState(() {
+        _error = 'Error saving skills to Firestore: $e';
+      });
+      print('Error saving skills to Firestore: $e');
+      throw e;
+    }
+  }
+
   Future<void> _parseResumeFromUrl() async {
+    print('DEBUG: _parseResumeFromUrl called');
     setState(() {
       _isLoading = true;
       _error = null;
@@ -48,10 +75,16 @@ class _ResumeParserPageState extends State<ResumeParserPage> {
         return;
       }
       final parsedData = json.decode(response.body);
+      print('Parsed data: $parsedData');
       List<String> skills = List<String>.from(parsedData['skills'] ?? []);
+      print('Extracted skills: $skills');
+      
+      // Save skills to Firestore
+      await _saveSkillsToFirestore(skills);
+      
       final jobs = await _loadJobs();
       _recommendedJobs = _rankJobs(jobs, skills);
-      widget.onResumeUploaded(skills); // Pass parsed skills to the callback
+      widget.onResumeUploaded(skills);
       
       setState(() {
         _isLoading = false;
@@ -65,6 +98,7 @@ class _ResumeParserPageState extends State<ResumeParserPage> {
   }
 
   Future<void> _pickFile() async {
+    print('DEBUG: _pickFile called');
     try {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
@@ -146,9 +180,17 @@ class _ResumeParserPageState extends State<ResumeParserPage> {
         return;
       }
       final parsedData = json.decode(response.body);
+      print('Parsed data: $parsedData');
       List<String> skills = List<String>.from(parsedData['skills'] ?? []);
+      print('Extracted skills: $skills');
+      
+      // Save skills to Firestore
+      await _saveSkillsToFirestore(skills);
+      
       final jobs = await _loadJobs();
       _recommendedJobs = _rankJobs(jobs, skills);
+      widget.onResumeUploaded(skills);
+      
       setState(() {
         _isLoading = false;
       });
@@ -208,12 +250,18 @@ class _ResumeParserPageState extends State<ResumeParserPage> {
               ),
             ),
             ElevatedButton(
-              onPressed: _isLoading ? null : _parseResumeFromUrl,
+              onPressed: _isLoading ? null : () {
+                print('DEBUG: Parse from URL button pressed');
+                _parseResumeFromUrl();
+              },
               child: Text(_isLoading ? 'Processing...' : 'Parse from URL'),
             ),
             const Divider(height: 32),
             ElevatedButton(
-              onPressed: _isLoading ? null : _pickFile,
+              onPressed: _isLoading ? null : () {
+                print('DEBUG: Upload Resume button pressed');
+                _pickFile();
+              },
               child: Text(_isLoading ? 'Processing...' : 'Upload Resume'),
             ),
             if (_fileName.isNotEmpty)

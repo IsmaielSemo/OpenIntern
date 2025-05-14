@@ -25,4 +25,24 @@ class Validators {
     }
     return null;
   }
+
+  static List<String> passwordUnmetConstraints(String password) {
+    final List<String> unmet = [];
+    if (password.length < 8) {
+      unmet.add('At least 8 characters');
+    }
+    if (RegExp(r'^[0-9]').hasMatch(password)) {
+      unmet.add('Does not start with a number');
+    }
+    if (!RegExp(r'[a-zA-Z]').hasMatch(password)) {
+      unmet.add('Contains letters');
+    }
+    if (!RegExp(r'[0-9]').hasMatch(password)) {
+      unmet.add('Contains numbers');
+    }
+    if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(password)) {
+      unmet.add('Contains special characters');
+    }
+    return unmet;
+  }
 }
