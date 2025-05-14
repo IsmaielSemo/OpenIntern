@@ -38,11 +38,11 @@ jobs:
 
     # Step 6: Archive build artifacts (optional)
     - name: Upload APK
-      uses: actions/upload-artifact@v2.323.0
+      uses: actions/upload-artifact@v2
       with:
         name: app-release.apk
         path: build/app/outputs/flutter-apk/app-release.apk
 
     # Debugging: List files in the APK directory
     - name: List APK directory
-      run: ls -R build/app/outputs/flutter-apk/    
+      run: ls -R build/app/outputs/flutter-apk/
