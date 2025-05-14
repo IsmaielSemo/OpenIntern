@@ -42,3 +42,7 @@ jobs:
       with:
         name: app-release.apk
         path: build/app/outputs/flutter-apk/app-release.apk
+
+    # Debugging: List files in the APK directory
+    - name: List APK directory
+      run: ls -R build/app/outputs/flutter-apk/    
